@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:v2ex/LatestBean.dart';
-import 'dart:convert';
-
-import 'package:v2ex/TabListWidget.dart';
+import 'package:flutter_v2ex/LatestBean.dart';
+import 'package:flutter_v2ex/TabListWidget.dart';
 
 void main() => runApp(new MyApp());
 
@@ -40,7 +37,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    getAllList();
     return DefaultTabController(
         child: new Scaffold(
             appBar: new AppBar(
@@ -55,19 +51,10 @@ class _MyHomePageState extends State<MyHomePage> {
             body: TabBarView(
                 children: tabs.map((tab) {
               return Container(
-                child: TabListWidget(latestList: latestList),
+                child: TabListWidget(),
               );
             }).toList())),
         length: tabs.length);
-  }
-
-  getAllList() {
-    var url = "https://www.v2ex.com/api/topics/latest.json";
-    http.get(url).then((response) {
-      List list = json.decode(response.body);
-      latestList = list.map((dynamic) => Latest.formJson(dynamic)).toList();
-      setState(() {});
-    });
   }
 }
 

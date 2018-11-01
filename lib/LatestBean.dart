@@ -1,5 +1,7 @@
-import 'package:v2ex/MemberBean.dart';
-import 'package:v2ex/NodeBean.dart';
+
+
+import 'package:flutter_v2ex/MemberBean.dart';
+import 'package:flutter_v2ex/NodeBean.dart';
 
 class Latest {
   String lastReplyBy;
