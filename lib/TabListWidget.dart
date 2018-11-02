@@ -1,20 +1,30 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_v2ex/LatestBean.dart';
+import 'package:flutter_v2ex/TabBean.dart';
 import 'package:flutter_v2ex/TabListItemWidget.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'dart:async';
 
 class TabListWidget extends StatefulWidget {
+  final TabBean tabBean;
+
+  const TabListWidget({Key key, this.tabBean}) : super(key: key);
+
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
-    return TabListWidgetState();
+    return TabListWidgetState(tabBean);
   }
 }
 
 class TabListWidgetState extends State {
+  final TabBean tabBean;
   List<Latest> latestList;
+
+  TabListWidgetState(this.tabBean);
 
   @override
   void initState() {
@@ -46,18 +56,32 @@ class TabListWidgetState extends State {
   }
 
   ///获取List数据
-  getListData(){
-    var url = "https://www.v2ex.com/api/topics/latest.json";
-    http.get(url).then((response) {
+  getListData() async{
+    http.Response response = await http.get(tabBean.url);
+    if(this.mounted){
       setState(() {
-        List list = json.decode(response.body);
-        latestList = list.map((dynamic) => Latest.formJson(dynamic)).toList();
+        if (tabBean.type == TabBean.JSON) {
+          parseJson(response.body);
+        } else if (tabBean.type == TabBean.HTML) {
+          parseHtml(response.body);
+        }
       });
-    });
+    }
+  }
+
+  parseJson(jsonString) {
+    List list = json.decode(jsonString);
+    latestList = list.map((dynamic) => Latest.formJson(dynamic)).toList();
+  }
+
+  parseHtml(htmlString) async {
+    const platform = const MethodChannel("com.v2ex/android");
+    String jsonString = await platform.invokeMethod("parseHtml", {"response": htmlString});
+    parseJson(jsonString);
   }
 
   ///处理刷新
-  Future<Null> _handleRefresh() async{
+  Future<Null> _handleRefresh() async {
     getListData();
   }
 }

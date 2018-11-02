@@ -1,8 +1,7 @@
-package com.yaoyumeng.v2ex.model;
+package com.v2ex.flutterv2ex.parsehtml;
 
 import android.util.Log;
 
-import com.yaoyumeng.v2ex.utils.ContentUtils;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -30,38 +29,8 @@ public class TopicListModel extends ArrayList<TopicModel> {
         Element body = doc.body();
         Elements elements = body.getElementsByAttributeValue("class", "cell item");
         for (Element el : elements) {
-            try {
-                TopicModel model = parseTopicModel(el, true, null);
-                add(model);
-            } catch (Exception e) {
-            }
-        }
-
-        int[] pages = ContentUtils.parsePage(body);
-        mCurrentPage = pages[0];
-        mTotalPage = pages[1];
-    }
-
-    public void parseFromNodeEntry(String responseBody, String nodeName) throws Exception {
-        Document doc = Jsoup.parse(responseBody);
-        String title = doc.title();
-        title = title.replace("V2EX ›", "").trim();
-        title = title.split(" ")[0];
-        NodeModel node = new NodeModel();
-        node.name = nodeName;
-        node.title = title;
-
-        Element body = doc.body();
-        //Elements elements = body.getElementsByAttributeValue("id", "TopicsNode");
-        //if(elements.size() != 1) return;
-        Elements elements = body.getElementsByAttributeValueMatching("class", Pattern.compile("cell from_(.*)"));
-        for (Element el : elements) {
-            try {
-                TopicModel topic = parseTopicModel(el, false, node);
-                add(topic);
-            } catch (Exception e) {
-                Log.e("err", e.toString());
-            }
+            TopicModel model = parseTopicModel(el, true, null);
+            add(model);
         }
 
         int[] pages = ContentUtils.parsePage(body);
@@ -80,31 +49,27 @@ public class TopicListModel extends ArrayList<TopicModel> {
                 Elements userIdNode = tdNode.getElementsByTag("a");
                 if (userIdNode != null) {
                     String idUrlString = userIdNode.attr("href");
-                    member.username = idUrlString.replace("/member/", "");
+                    member.setUsername(idUrlString.replace("/member/", ""));
                 }
 
                 Elements avatarNode = tdNode.getElementsByTag("img");
                 if (avatarNode != null) {
-                    String avatarString = avatarNode.attr("src");
-                    if (avatarString.startsWith("//")) {
-                        avatarString = "http:" + avatarString;
-                    }
-                    member.avatar = avatarString;
+                    member.setAvatar_normal(avatarNode.attr("src"));
                 }
             } else if (content.contains("class=\"item_title\"") ) {
                 Elements aNodes = tdNode.getElementsByTag("a");
                 for (Element aNode : aNodes) {
                     if (parseNode && aNode.attr("class").equals("node")) {
                         String nodeUrlString = aNode.attr("href");
-                        node.name = nodeUrlString.replace("/go/", "");
-                        node.title = aNode.text();
+                        node.setName(nodeUrlString.replace("/go/", ""));
+                        node.setTitle(aNode.text());
                     } else {
                         if (aNode.toString().contains("reply") ) {
-                            topic.title = aNode.text();
+                            topic.setTitle(aNode.text());
                             String topicIdString = aNode.attr("href");
                             String[] subArray = topicIdString.split("#");
-                            topic.id = Integer.parseInt(subArray[0].replace("/t/", ""));
-                            topic.replies = Integer.parseInt(subArray[1].replace("reply", ""));
+                            topic.setId(Integer.parseInt(subArray[0].replace("/t/", "")));
+                            topic.setReplies(Integer.parseInt(subArray[1].replace("reply", "")));
                         }
                     }
                 }
@@ -122,42 +87,24 @@ public class TopicListModel extends ArrayList<TopicModel> {
                         long created = System.currentTimeMillis() / 1000;
                         String[] stringArray = dateString.split(" ");
                         if (stringArray.length > 1) {
-                            String unitString = "";
-                            try {
-                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-                                Date date = sdf.parse(dateString);
-                                created = date.getTime() / 1000;
-                                topic.created = created;
-                                break;
-                            } catch (Exception e) {
-                            }
-
                             int how = Integer.parseInt(stringArray[0]);
                             String subString = stringArray[1].substring(0, 1);
                             if (subString.equals("分")) {
-                                unitString = "分钟前";
                                 created -= 60 * how;
                             } else if (subString.equals("小")) {
-                                unitString = "小时前";
                                 created -= 3600 * how;
                             } else if (subString.equals("天")) {
                                 created -= 24 * 3600 * how;
-                                unitString = "天前";
                             }
-                            dateString = String.format("%s%s", stringArray[0], unitString);
-                        } else {
-                            dateString = "刚刚";
                         }
-                        topic.created = created;
-                    } else {
-                        topic.created = -1;
+                        topic.setLast_modified(created);
                     }
                 }
             }
         }
 
-        topic.member = member;
-        topic.node = node;
+        topic.setMember(member);
+        topic.setNode(node);
 
         return topic;
     }

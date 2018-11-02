@@ -70,7 +70,10 @@ flutter {
 }
 
 dependencies {
+    implementation fileTree(dir: 'lib', include: ['*.jar'])
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    //gson
+    implementation 'com.google.code.gson:gson:2.8.5'
 }

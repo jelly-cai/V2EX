@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_v2ex/LatestBean.dart';
+import 'package:flutter_v2ex/TabBean.dart';
 import 'package:flutter_v2ex/TabListWidget.dart';
 
 void main() => runApp(new MyApp());
@@ -51,31 +52,23 @@ class _MyHomePageState extends State<MyHomePage> {
             body: TabBarView(
                 children: tabs.map((tab) {
               return Container(
-                child: TabListWidget(),
+                child: TabListWidget(tabBean: tab),
               );
             }).toList())),
         length: tabs.length);
   }
 }
 
-class TabBean {
-  final String title;
-
-  TabBean(this.title);
-}
-
 List<TabBean> tabs = [
-  TabBean("全部"),
-  TabBean("最热"),
-  TabBean("技术"),
-  TabBean("创意"),
-  TabBean("好玩"),
-  TabBean("APPLE"),
-  TabBean("酷工作"),
-  TabBean("交易"),
-  TabBean("城市"),
-  TabBean("问与答"),
-  TabBean("R2"),
-  TabBean("关注"),
-  TabBean("最近")
+  TabBean("最热", "https://www.v2ex.com/api/topics/hot.json", TabBean.JSON),
+  TabBean("最新", "https://www.v2ex.com/api/topics/latest.json", TabBean.JSON),
+  TabBean("技术", "https://www.v2ex.com/?tab=tech", TabBean.HTML),
+  TabBean("创意", "https://www.v2ex.com/?tab=creative", TabBean.HTML),
+  TabBean("好玩", "https://www.v2ex.com/?tab=play", TabBean.HTML),
+  TabBean("APPLE", "https://www.v2ex.com/?tab=apple", TabBean.HTML),
+  TabBean("酷工作", "https://www.v2ex.com/?tab=jobs", TabBean.HTML),
+  TabBean("交易", "https://www.v2ex.com/?tab=deals", TabBean.HTML),
+  TabBean("城市", "https://www.v2ex.com/?tab=city", TabBean.HTML),
+  TabBean("问与答", "https://www.v2ex.com/?tab=qna", TabBean.HTML),
+  TabBean("R2", "https://www.v2ex.com/?tab=r2", TabBean.HTML)
 ];
