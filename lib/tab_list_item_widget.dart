@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_v2ex/LatestBean.dart';
+import 'package:flutter_v2ex/latest_bean.dart';
 
 class TabListItemWidget extends StatelessWidget {
   final Latest latest;
@@ -9,36 +9,41 @@ class TabListItemWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return Row(
-      mainAxisSize: MainAxisSize.max,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: <Widget>[
-        ItemIconWidget(iconUrl: "https:${latest.member.avatarNormal}"),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                latest.title,
-                textAlign: TextAlign.left,
-                style: TextStyle(fontSize: 15.0),
-              ),
-              Container(
-                margin: EdgeInsets.only(top: 5.0),
-                child: Row(
-                  children: <Widget>[
-                    NodeTitleTextWidget(nodeTitle: latest.node.title),
-                    UserNameTextWidget(userName: latest.member.userName),
-                    DiffTimeTextWidget(lastModified: latest.lastModified * 1000)
-                  ],
+    return GestureDetector(
+      onTap: (){
+        Navigator.of(context).pushNamed("/item_content");
+      },
+      child: Row(
+        mainAxisSize: MainAxisSize.max,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          ItemIconWidget(iconUrl: "https:${latest.member.avatarNormal}"),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  latest.title,
+                  textAlign: TextAlign.left,
+                  style: TextStyle(fontSize: 15.0),
                 ),
-              )
-            ],
+                Container(
+                  margin: EdgeInsets.only(top: 5.0),
+                  child: Row(
+                    children: <Widget>[
+                      NodeTitleTextWidget(nodeTitle: latest.node.title),
+                      UserNameTextWidget(userName: latest.member.userName),
+                      DiffTimeTextWidget(lastModified: latest.lastModified * 1000)
+                    ],
+                  ),
+                )
+              ],
+            ),
           ),
-        ),
-        RepliesTextWidget(replies: latest.replies)
-      ],
+          RepliesTextWidget(replies: latest.replies)
+        ],
+      ),
     );
   }
 }
@@ -79,7 +84,8 @@ class ItemIconWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return Container(
+    return
+    Container(
       margin: EdgeInsets.only(right: 10.0),
       width: 50.0,
       height: 50.0,

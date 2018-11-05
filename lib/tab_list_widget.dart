@@ -2,9 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_v2ex/LatestBean.dart';
-import 'package:flutter_v2ex/TabBean.dart';
-import 'package:flutter_v2ex/TabListItemWidget.dart';
+import 'package:flutter_v2ex/latest_bean.dart';
+import 'package:flutter_v2ex/tab_bean.dart';
+import 'package:flutter_v2ex/tab_list_item_widget.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
 
@@ -20,7 +20,7 @@ class TabListWidget extends StatefulWidget {
   }
 }
 
-class TabListWidgetState extends State {
+class TabListWidgetState extends State with AutomaticKeepAliveClientMixin{
   final TabBean tabBean;
   List<Latest> latestList;
 
@@ -69,11 +69,13 @@ class TabListWidgetState extends State {
     }
   }
 
+  ///解析json
   parseJson(jsonString) {
     List list = json.decode(jsonString);
     latestList = list.map((dynamic) => Latest.formJson(dynamic)).toList();
   }
 
+  ///解析html
   parseHtml(htmlString) async {
     const platform = const MethodChannel("com.v2ex/android");
     String jsonString = await platform.invokeMethod("parseHtml", {"response": htmlString});
@@ -84,4 +86,9 @@ class TabListWidgetState extends State {
   Future<Null> _handleRefresh() async {
     getListData();
   }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
+
 }
