@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_v2ex/item_content_widget.dart';
 import 'package:flutter_v2ex/latest_bean.dart';
 
 class TabListItemWidget extends StatelessWidget {
@@ -10,8 +11,10 @@ class TabListItemWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     // TODO: implement build
     return GestureDetector(
-      onTap: (){
-        Navigator.of(context).pushNamed("/item_content");
+      onTap: () {
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+          return ItemContentWidget(latest: latest);
+        }));
       },
       child: Row(
         mainAxisSize: MainAxisSize.max,
@@ -34,7 +37,8 @@ class TabListItemWidget extends StatelessWidget {
                     children: <Widget>[
                       NodeTitleTextWidget(nodeTitle: latest.node.title),
                       UserNameTextWidget(userName: latest.member.userName),
-                      DiffTimeTextWidget(lastModified: latest.lastModified * 1000)
+                      DiffTimeTextWidget(
+                          lastModified: latest.lastModified * 1000)
                     ],
                   ),
                 )
@@ -84,8 +88,7 @@ class ItemIconWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return
-    Container(
+    return Container(
       margin: EdgeInsets.only(right: 10.0),
       width: 50.0,
       height: 50.0,

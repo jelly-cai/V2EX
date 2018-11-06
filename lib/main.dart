@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: new MyHomePage(title: 'V2EX'),
-      routes: {"/item_content":(context) => ItemContentWidget()},
+      routes: {"/item_content": (context) => ItemContentWidget()},
     );
   }
 }
@@ -61,10 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
       child: new Scaffold(
           appBar: new AppBar(
             title: new Text(widget.title),
-            bottom: TabBar(
-              tabs: tabWidgets,
-              isScrollable: true
-            ),
+            bottom: TabBar(tabs: tabWidgets, isScrollable: true),
           ),
           body: TabBarView(
               children: tabs.map((tab) {
@@ -76,6 +73,4 @@ class _MyHomePageState extends State<MyHomePage> {
       initialIndex: 0,
     );
   }
-
-
 }
