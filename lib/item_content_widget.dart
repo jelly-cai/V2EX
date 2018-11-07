@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_v2ex/time_utils.dart';
 import 'package:flutter_v2ex/html_text_widget.dart';
 import 'package:flutter_v2ex/latest_bean.dart';
 
@@ -39,6 +40,7 @@ class ItemContentWidgetState extends State {
                   iconUrl: "https:${latest.member.avatarNormal}",
                   userName: latest.member.userName,
                   replies: latest.replies,
+                  created: latest.created * 1000,
                 ),
                 Padding(
                     padding: EdgeInsets.only(top: 3.0),
@@ -52,7 +54,8 @@ class ItemContentWidgetState extends State {
               ),
             ),
             Divider(),
-            HtmlTextWidget(data: '<div style="font-size:15.0">${latest.contentRendered}</div>')
+            HtmlTextWidget(
+                data: '<p style="font-size:14.0">${latest.contentRendered}</p>')
           ],
         ),
       ),
@@ -65,8 +68,10 @@ class IconInfoWidget extends StatelessWidget {
   final String iconUrl;
   final String userName;
   final int replies;
+  final int created;
 
-  const IconInfoWidget({Key key, this.iconUrl, this.userName, this.replies})
+  const IconInfoWidget(
+      {Key key, this.iconUrl, this.userName, this.replies, this.created})
       : super(key: key);
 
   @override
@@ -90,7 +95,7 @@ class IconInfoWidget extends StatelessWidget {
               Text(userName),
               Padding(
                 padding: EdgeInsets.only(top: 3.0),
-                child: Text("3分钟前 $replies个回复"),
+                child: Text(getDiffTime(created) + " $replies个回复"),
               )
             ],
           ),

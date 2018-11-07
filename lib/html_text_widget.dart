@@ -244,7 +244,7 @@ class HtmlParser {
         Match closeMatch = this._closeTag.firstMatch(html);
         if(closeMatch != null){
           if(_wrapTags.contains(closeMatch[0])){
-            //html.replaceAll(_closeTag, replace);
+            html.replaceAll(_closeTag, "");
           }
         }
 
@@ -338,8 +338,9 @@ class HtmlParser {
         attrs[attribute] = value;
       }
     }
-
-    this._appendTag(tagName, attrs);
+    if(attrs.length != 0){
+      this._appendTag(tagName, attrs);
+    }
   }
 
   void _parseEndTag([String tagName]) {

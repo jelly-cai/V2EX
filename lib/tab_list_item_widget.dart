@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_v2ex/time_utils.dart';
 import 'package:flutter_v2ex/item_content_widget.dart';
 import 'package:flutter_v2ex/latest_bean.dart';
 
@@ -162,7 +163,7 @@ class DiffTimeTextWidget extends StatelessWidget {
     return Container(
       margin: EdgeInsets.only(left: 10.0),
       child: Text(
-        getDiffTime(),
+        getDiffTime(lastModified),
         style: TextStyle(
           fontSize: 12.0,
           color: Color.fromARGB(255, 204, 204, 204),
@@ -171,19 +172,4 @@ class DiffTimeTextWidget extends StatelessWidget {
     );
   }
 
-  String getDiffTime() {
-    Duration duration = DateTime.now()
-        .difference(DateTime.fromMillisecondsSinceEpoch(lastModified));
-    if (duration.inDays != 0) {
-      return "${duration.inDays}天前";
-    } else if (duration.inHours != 0) {
-      return "${duration.inHours}小时前";
-    } else if (duration.inMinutes != 0) {
-      return "${duration.inMinutes}分钟前";
-    } else if (duration.inSeconds != 0) {
-      return "${duration.inSeconds}秒前";
-    } else {
-      return "刚刚";
-    }
-  }
 }
