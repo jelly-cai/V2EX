@@ -13,7 +13,7 @@ class HtmlTextWidget extends StatelessWidget {
 
     TextSpan span = this._stackToTextSpan(nodes, context);
 
-    RichText contents = new RichText(text: span);
+    RichText contents = new RichText(text: span,);
 
     return new Container(child: contents);
   }
@@ -32,8 +32,12 @@ class HtmlTextWidget extends StatelessWidget {
   }
 
   TextSpan _textSpan(Map node) {
-    TextSpan span = new TextSpan(text: node['text'], style: node['style']);
-
+    TextSpan span;
+    if(node['tag'] == "h2"){
+      span = TextSpan(text: node['text'], style: node['style']);
+    }else{
+      span = TextSpan(text: node['text'], style: node['style']);
+    }
     return span;
   }
 }
@@ -156,7 +160,12 @@ class HtmlParser {
     'thead',
     'tr'
   ];
-  final List _wrapTags = const ['br'];
+
+  ///换行标签，里面有自闭标签
+  final List _wrapTags = const ['br', 'p'];
+
+  ///需要特殊处理样式的标签
+  final List _styleTags = const ['h2'];
   final List _fillAttrs = const [
     'checked',
     'compact',
@@ -219,11 +228,14 @@ class HtmlParser {
 
           if (match != null) {
             String tag = match[0];
-
-            html = html.substring(tag.length);
-            chars = false;
-
-            this._parseEndTag(tag);
+            if(_wrapTags.contains(match[1])){
+              html = html.replaceAll(_endTag, "\n");
+              continue;
+            }else{
+              html = html.substring(tag.length);
+              chars = false;
+              this._parseEndTag(tag);
+            }
           }
         }
         // Start tag
@@ -242,9 +254,10 @@ class HtmlParser {
 
         //wrap tag
         Match closeMatch = this._closeTag.firstMatch(html);
-        if(closeMatch != null){
-          if(_wrapTags.contains(closeMatch[0])){
-            html.replaceAll(_closeTag, "");
+        if (closeMatch != null) {
+          if (_wrapTags.contains(closeMatch[0])) {
+            html = html.replaceAll(_closeTag, "\n");
+            continue;
           }
         }
 
@@ -338,7 +351,7 @@ class HtmlParser {
         attrs[attribute] = value;
       }
     }
-    if(attrs.length != 0){
+    if (attrs.length != 0 || _styleTags.contains(tagName)) {
       this._appendTag(tagName, attrs);
     }
   }
@@ -392,9 +405,12 @@ class HtmlParser {
       case 'em':
         fontStyle = FontStyle.italic;
         break;
-
       case 'u':
         textDecoration = TextDecoration.underline;
+        break;
+      case 'h2':
+        fontSize = 18.0;
+        fontWeight = FontWeight.w500;
         break;
     }
 
@@ -433,11 +449,12 @@ class HtmlParser {
     }
 
     TextStyle textStyle = new TextStyle(
-        color: color,
-        fontWeight: fontWeight,
-        fontStyle: fontStyle,
-        decoration: textDecoration,
-        fontSize: fontSize);
+      color: color,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      decoration: textDecoration,
+      fontSize: fontSize,
+    );
 
     return textStyle;
   }

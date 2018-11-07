@@ -3,6 +3,9 @@ package com.v2ex.flutterv2ex.parsehtml;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * Created by yw on 2015/5/28.
  */
@@ -40,4 +43,33 @@ public class ContentUtils {
         }
         return new int[]{currentPage, totalPage};
     }
+
+    public static long toTimeLong(String dateString) {
+        String[] stringArray = dateString.split(" ");
+        long created = System.currentTimeMillis() / 1000;
+        int how = 0;
+        try {
+            how = Integer.parseInt(stringArray[0]);
+        } catch (Exception e) {
+
+        }
+        String subString = stringArray[1].substring(0, 1);
+        if (subString.equals("分")) {
+            created -= 60 * how;
+        } else if (subString.equals("小")) {
+            created -= 3600 * how;
+        } else if (subString.equals("天")) {
+            created -= 24 * 3600 * how;
+        } else {
+            try {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+                Date date = sdf.parse(dateString);
+                created = date.getTime() / 1000;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return created;
+    }
+
 }

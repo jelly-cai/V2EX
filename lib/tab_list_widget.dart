@@ -78,7 +78,7 @@ class TabListWidgetState extends State with AutomaticKeepAliveClientMixin{
   ///解析html
   parseHtml(htmlString) async {
     const platform = const MethodChannel("com.v2ex/android");
-    String jsonString = await platform.invokeMethod("parseHtml", {"response": htmlString});
+    String jsonString = await platform.invokeMethod("parseTopicHtml", {"response": htmlString});
     parseJson(jsonString);
   }
 

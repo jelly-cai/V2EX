@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_v2ex/time_utils.dart';
 import 'package:flutter_v2ex/html_text_widget.dart';
 import 'package:flutter_v2ex/latest_bean.dart';
+import 'package:flutter_v2ex/topic_content_bean.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class ItemContentWidget extends StatefulWidget {
   final Latest latest;
@@ -17,8 +21,16 @@ class ItemContentWidget extends StatefulWidget {
 
 class ItemContentWidgetState extends State {
   final Latest latest;
+  TopicContent topicContent;
 
   ItemContentWidgetState(this.latest);
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getData();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,39 +39,65 @@ class ItemContentWidgetState extends State {
       appBar: AppBar(
         title: Text("主题详情"),
       ),
-      body: Container(
-        padding: EdgeInsets.all(10.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                IconInfoWidget(
-                  iconUrl: "https:${latest.member.avatarNormal}",
-                  userName: latest.member.userName,
-                  replies: latest.replies,
-                  created: latest.created * 1000,
-                ),
-                Padding(
-                    padding: EdgeInsets.only(top: 3.0),
-                    child: Text(latest.node.title))
-              ],
+      body: topicContent == null
+          ? Container()
+          : ListView.builder(
+              itemBuilder: (context, position) {
+                if (position == 0) {
+                  return Container(
+                    padding: EdgeInsets.all(10.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            IconInfoWidget(
+                              iconUrl:
+                                  "https:${topicContent.latest.member.avatarNormal}",
+                              userName: topicContent.latest.member.userName,
+                              replies: topicContent.latest.replies,
+                              created: topicContent.latest.created * 1000,
+                            ),
+                            Padding(
+                                padding: EdgeInsets.only(top: 3.0),
+                                child: Text(topicContent.latest.node.title))
+                          ],
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(top: 10.0),
+                          child: HtmlTextWidget(
+                            data:
+                                '<span style="font-size:17.0">${topicContent.latest.title}</span>',
+                          ),
+                        ),
+                        Divider(),
+                        HtmlTextWidget(
+                          data:
+                              '<span style="font-size:14.0">${topicContent.latest.contentRendered}</span>',
+                        ),
+                      ],
+                    ),
+                  );
+                }
+                return Text(topicContent.replies[position - 1].content);
+              },
+              itemCount: topicContent.replies.length + 1,
             ),
-            Padding(
-              padding: EdgeInsets.only(top: 10.0),
-              child: HtmlTextWidget(
-                data: '<span style="font-size:17.0">${latest.title}</span>',
-              ),
-            ),
-            Divider(),
-            HtmlTextWidget(
-                data: '<p style="font-size:14.0">${latest.contentRendered}</p>')
-          ],
-        ),
-      ),
     );
+  }
+
+  ///获取List数据
+  getData() async {
+    http.Response response =
+        await http.get("https://www.v2ex.com/t/${latest.id}?p=1");
+    const platform = const MethodChannel("com.v2ex/android");
+    String jsonString = await platform.invokeMethod(
+        "parseReplyHtml", {"response": response.body, "id": latest.id});
+    setState(() {
+      topicContent = TopicContent.fromJson(json.decode(jsonString));
+    });
   }
 }
 
