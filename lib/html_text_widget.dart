@@ -193,7 +193,7 @@ class HtmlParser {
         r'^<([-A-Za-z0-9_]+)((?:\s+\w+(?:\s*=\s*(?:(?:"[^"]*")' +
             "|(?:'[^']*')|[^>\\s]+))?)*)\\s*(\/?)>");
     this._endTag = new RegExp("^<\/([-A-Za-z0-9_]+)[^>]*>");
-    this._closeTag = new RegExp("<([-A-Za-z0-9_]+)[^>]*>\/");
+    this._closeTag = new RegExp("<([-A-Za-z0-9_]+)[^>]*\/+>");
     this._attr = new RegExp(
         r'([-A-Za-z0-9_]+)(?:\s*=\s*(?:(?:"((?:\\.|[^"])*)")' +
             r"|(?:'((?:\\.|[^'])*)')|([^>\s]+)))?");
@@ -228,14 +228,9 @@ class HtmlParser {
 
           if (match != null) {
             String tag = match[0];
-            if(_wrapTags.contains(match[1])){
-              html = html.replaceAll(_endTag, "\n");
-              continue;
-            }else{
-              html = html.substring(tag.length);
-              chars = false;
-              this._parseEndTag(tag);
-            }
+            html = html.substring(tag.length);
+            chars = false;
+            this._parseEndTag(tag);
           }
         }
         // Start tag
@@ -244,20 +239,9 @@ class HtmlParser {
 
           if (match != null) {
             String tag = match[0];
-
             html = html.substring(tag.length);
             chars = false;
-
             this._parseStartTag(tag, match[1], match[2], match.start);
-          }
-        }
-
-        //wrap tag
-        Match closeMatch = this._closeTag.firstMatch(html);
-        if (closeMatch != null) {
-          if (_wrapTags.contains(closeMatch[0])) {
-            html = html.replaceAll(_closeTag, "\n");
-            continue;
           }
         }
 

@@ -58,7 +58,7 @@ public class TopicWithReplyListModel {
         //内容
         Elements contentElements = element.select("div.reply_content");
         reply.setContent(contentElements.text());
-        reply.setContentRendered(contentElements.html());
+        reply.setContentRendered(contentElements.html().replace("@\n","@"));
         //名称
         Elements userNameElements = element.select("a.dark");
         reply.getMember().setUsername(userNameElements.attr("href").replace("/member/",""));

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_v2ex/reply_bean.dart';
+import 'package:flutter_v2ex/simple_html_text_widget.dart';
 import 'package:flutter_v2ex/time_utils.dart';
 import 'package:flutter_v2ex/html_text_widget.dart';
 import 'package:flutter_v2ex/latest_bean.dart';
@@ -74,7 +75,7 @@ class ItemContentWidgetState extends State {
                           ),
                         ),
                         Divider(),
-                        HtmlTextWidget(
+                        SimpleHtmlText(
                           data:
                               '<span style="font-size:14.0">${topicContent.latest.contentRendered}</span>',
                         ),
@@ -125,19 +126,18 @@ class ReplyItemWidget extends StatelessWidget {
         Container(
             margin: EdgeInsets.only(right: 5.0),
             child: CircleIconWidget(
-              iconUrl: reply.member.avatarNormal,
-            )),
+                iconUrl: "https:${reply.member.avatarNormal}")),
         Expanded(
             child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             ReplyUserInfoWidget(
                 userName: reply.member.userName,
-                created: reply.created,
+                created: reply.created * 1000,
                 position: position),
             Container(
                 margin: EdgeInsets.only(top: 3.0),
-                child: HtmlTextWidget(data: reply.contentRendered)),
+                child: HtmlTextWidget(data: '<span style="font-size:14.0">${reply.contentRendered}</span>')),
             Divider()
           ],
         ))
@@ -164,13 +164,21 @@ class ReplyUserInfoWidget extends StatelessWidget {
       children: <Widget>[
         Row(
           children: <Widget>[
-            Text(userName),
+            Text(userName,
+                style: TextStyle(fontSize: 12.0, color: Colors.black)),
             Container(
-                margin: EdgeInsets.only(left: 3.0),
-                child: Text(getDiffTime(created)))
+              margin: EdgeInsets.only(left: 5.0),
+              child: Text(
+                getDiffTime(created),
+                style: TextStyle(
+                  fontSize: 10.0,
+                  color: Color.fromARGB(255, 153, 153, 153),
+                ),
+              ),
+            )
           ],
         ),
-        Text("第$position楼",style: TextStyle(fontSize: 10.0))
+        Text("第$position楼", style: TextStyle(fontSize: 10.0))
       ],
     );
   }
