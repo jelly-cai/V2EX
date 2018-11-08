@@ -47,12 +47,7 @@ public class ContentUtils {
     public static long toTimeLong(String dateString) {
         String[] stringArray = dateString.split(" ");
         long created = System.currentTimeMillis() / 1000;
-        int how = 0;
-        try {
-            how = Integer.parseInt(stringArray[0]);
-        } catch (Exception e) {
-
-        }
+        int how = Integer.parseInt(stringArray[0]);
         String subString = stringArray[1].substring(0, 1);
         if (subString.equals("分")) {
             created -= 60 * how;

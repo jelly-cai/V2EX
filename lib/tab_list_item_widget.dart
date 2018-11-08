@@ -3,6 +3,7 @@ import 'package:flutter_v2ex/time_utils.dart';
 import 'package:flutter_v2ex/item_content_widget.dart';
 import 'package:flutter_v2ex/latest_bean.dart';
 
+///首页列表Item
 class TabListItemWidget extends StatelessWidget {
   final Latest latest;
 

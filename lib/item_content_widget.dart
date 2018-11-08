@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_v2ex/reply_bean.dart';
 import 'package:flutter_v2ex/time_utils.dart';
 import 'package:flutter_v2ex/html_text_widget.dart';
 import 'package:flutter_v2ex/latest_bean.dart';
@@ -77,11 +78,18 @@ class ItemContentWidgetState extends State {
                           data:
                               '<span style="font-size:14.0">${topicContent.latest.contentRendered}</span>',
                         ),
+                        Divider()
                       ],
                     ),
                   );
                 }
-                return Text(topicContent.replies[position - 1].content);
+
+                ///回复对象
+                Reply reply = topicContent.replies[position - 1];
+                return Container(
+                  padding: EdgeInsets.only(left: 5.0, right: 5.0),
+                  child: ReplyItemWidget(reply: reply, position: position),
+                );
               },
               itemCount: topicContent.replies.length + 1,
             ),
@@ -101,6 +109,93 @@ class ItemContentWidgetState extends State {
   }
 }
 
+///回复列表item
+class ReplyItemWidget extends StatelessWidget {
+  final Reply reply;
+  final int position;
+
+  const ReplyItemWidget({Key key, this.reply, this.position}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Container(
+            margin: EdgeInsets.only(right: 5.0),
+            child: CircleIconWidget(
+              iconUrl: reply.member.avatarNormal,
+            )),
+        Expanded(
+            child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            ReplyUserInfoWidget(
+                userName: reply.member.userName,
+                created: reply.created,
+                position: position),
+            Container(
+                margin: EdgeInsets.only(top: 3.0),
+                child: HtmlTextWidget(data: reply.contentRendered)),
+            Divider()
+          ],
+        ))
+      ],
+    );
+  }
+}
+
+///回复列表的用户信息
+class ReplyUserInfoWidget extends StatelessWidget {
+  final String userName;
+  final int created;
+  final int position;
+
+  const ReplyUserInfoWidget(
+      {Key key, this.userName, this.created, this.position})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        Row(
+          children: <Widget>[
+            Text(userName),
+            Container(
+                margin: EdgeInsets.only(left: 3.0),
+                child: Text(getDiffTime(created)))
+          ],
+        ),
+        Text("第$position楼",style: TextStyle(fontSize: 10.0))
+      ],
+    );
+  }
+}
+
+///圆形头像
+class CircleIconWidget extends StatelessWidget {
+  final String iconUrl;
+
+  const CircleIconWidget({Key key, this.iconUrl}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return ClipOval(
+      child: Image.network(
+        iconUrl,
+        width: 35.0,
+        height: 35.0,
+        fit: BoxFit.fitWidth,
+      ),
+    );
+  }
+}
+
 ///头像用户信息
 class IconInfoWidget extends StatelessWidget {
   final String iconUrl;
@@ -117,23 +212,24 @@ class IconInfoWidget extends StatelessWidget {
     // TODO: implement build
     return Row(
       children: <Widget>[
-        ClipOval(
-          child: Image.network(
-            iconUrl,
-            width: 45.0,
-            height: 45.0,
-            fit: BoxFit.fitWidth,
-          ),
-        ),
+        CircleIconWidget(iconUrl: iconUrl),
         Padding(
           padding: EdgeInsets.only(left: 10.0, top: 3.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Text(userName),
+              Text(
+                userName,
+                style: TextStyle(fontSize: 13.0, color: Colors.black),
+              ),
               Padding(
-                padding: EdgeInsets.only(top: 3.0),
-                child: Text(getDiffTime(created) + " $replies个回复"),
+                padding: EdgeInsets.only(top: 4.0),
+                child: Text(
+                  getDiffTime(created) + " $replies个回复",
+                  style: TextStyle(
+                      fontSize: 11.0,
+                      color: Color.fromARGB(255, 153, 153, 153)),
+                ),
               )
             ],
           ),
