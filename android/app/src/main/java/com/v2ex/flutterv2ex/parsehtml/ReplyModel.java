@@ -6,6 +6,7 @@ public class ReplyModel{
     private String contentRendered;
     private MemberModel member;
     private long created;
+    private String createdString;
 
     public String getContent() {
         return content;
@@ -37,5 +38,13 @@ public class ReplyModel{
 
     public void setCreated(long created) {
         this.created = created;
+    }
+
+    public void setCreatedString(String createdString) {
+        this.createdString = createdString;
+    }
+
+    public String getCreatedString() {
+        return createdString;
     }
 }

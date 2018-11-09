@@ -64,7 +64,7 @@ public class TopicWithReplyListModel {
         reply.getMember().setUsername(userNameElements.attr("href").replace("/member/",""));
         //时间
         Elements createdElements = element.select("span.ago");
-        reply.setCreated(ContentUtils.toTimeLong(createdElements.text()));
+        reply.setCreatedString(createdElements.text());
         return reply;
     }
 
@@ -100,7 +100,7 @@ public class TopicWithReplyListModel {
         String[] components = dateString.split("·");
         if (components.length >= 2) {
             dateString = components[1].trim();
-            topic.setCreated(ContentUtils.toTimeLong(dateString));
+            topic.setCreatedString(dateString);
         }
         //内容
         Elements contentNodes = body.getElementsByClass("topic_content");

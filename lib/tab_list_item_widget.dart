@@ -22,7 +22,7 @@ class TabListItemWidget extends StatelessWidget {
         mainAxisSize: MainAxisSize.max,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          ItemIconWidget(iconUrl: "https:${latest.member.avatarNormal}"),
+          ItemIconWidget(iconUrl: "http:${latest.member.avatarNormal}"),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -40,7 +40,8 @@ class TabListItemWidget extends StatelessWidget {
                       NodeTitleTextWidget(nodeTitle: latest.node.title),
                       UserNameTextWidget(userName: latest.member.userName),
                       DiffTimeTextWidget(
-                          lastModified: latest.lastModified * 1000)
+                          lastModified: latest.lastModified * 1000,
+                          lastModifiedString: latest.lastModifiedString)
                     ],
                   ),
                 )
@@ -155,8 +156,11 @@ class NodeTitleTextWidget extends StatelessWidget {
 ///显示差异时间Widget
 class DiffTimeTextWidget extends StatelessWidget {
   final int lastModified;
+  final String lastModifiedString;
 
-  const DiffTimeTextWidget({Key key, this.lastModified}) : super(key: key);
+  const DiffTimeTextWidget(
+      {Key key, this.lastModified, this.lastModifiedString})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -164,7 +168,9 @@ class DiffTimeTextWidget extends StatelessWidget {
     return Container(
       margin: EdgeInsets.only(left: 10.0),
       child: Text(
-        getDiffTime(lastModified),
+        lastModifiedString == null
+            ? getDiffTime(lastModified)
+            : lastModifiedString,
         style: TextStyle(
           fontSize: 12.0,
           color: Color.fromARGB(255, 204, 204, 204),
@@ -172,5 +178,4 @@ class DiffTimeTextWidget extends StatelessWidget {
       ),
     );
   }
-
 }

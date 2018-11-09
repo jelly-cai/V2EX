@@ -7,9 +7,11 @@ class Latest {
   String title;
   String url;
   int created;
+  String createdString;
   String content;
   String contentRendered;
   int lastModified;
+  String lastModifiedString;
   int replies;
   int id;
   Node node;
@@ -21,9 +23,11 @@ class Latest {
       this.title,
       this.url,
       this.created,
+      this.createdString,
       this.content,
       this.contentRendered,
       this.lastModified,
+      this.lastModifiedString,
       this.replies,
       this.id,
       this.node,
@@ -36,9 +40,11 @@ class Latest {
         title: json['title'],
         url: json['url'],
         created: json['created'],
+        createdString: json['createdString'],
         content: json['content'],
         contentRendered: json['content_rendered'],
         lastModified: json['last_modified'],
+        lastModifiedString: json["last_modified_string"],
         replies: json['replies'],
         id: json['id'],
         node: Node.fromJson(json['node']),

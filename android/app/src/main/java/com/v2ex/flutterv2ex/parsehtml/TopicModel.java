@@ -9,6 +9,8 @@ public class TopicModel {
     private NodeModel node;
     private long last_modified;
     private long created;
+    private String createdString;
+    private String last_modified_string;
     private String content;
     private String content_rendered;
 
@@ -82,5 +84,21 @@ public class TopicModel {
 
     public String getContent_rendered() {
         return content_rendered;
+    }
+
+    public void setLast_modified_string(String last_modified_string) {
+        this.last_modified_string = last_modified_string;
+    }
+
+    public String getLast_modified_string() {
+        return last_modified_string;
+    }
+
+    public void setCreatedString(String createdString) {
+        this.createdString = createdString;
+    }
+
+    public String getCreatedString() {
+        return createdString;
     }
 }

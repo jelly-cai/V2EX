@@ -43,66 +43,30 @@ public class TopicListModel extends ArrayList<TopicModel> {
         TopicModel topic = new TopicModel();
         MemberModel member = new MemberModel();
         if (parseNode) node = new NodeModel();
-        for (Element tdNode : tdNodes) {
-            String content = tdNode.toString();
-            if (content.contains("class=\"avatar\"") ) {
-                Elements userIdNode = tdNode.getElementsByTag("a");
-                if (userIdNode != null) {
-                    String idUrlString = userIdNode.attr("href");
-                    member.setUsername(idUrlString.replace("/member/", ""));
-                }
-
-                Elements avatarNode = tdNode.getElementsByTag("img");
-                if (avatarNode != null) {
-                    member.setAvatar_normal(avatarNode.attr("src"));
-                }
-            } else if (content.contains("class=\"item_title\"") ) {
-                Elements aNodes = tdNode.getElementsByTag("a");
-                for (Element aNode : aNodes) {
-                    if (parseNode && aNode.attr("class").equals("node")) {
-                        String nodeUrlString = aNode.attr("href");
-                        node.setName(nodeUrlString.replace("/go/", ""));
-                        node.setTitle(aNode.text());
-                    } else {
-                        if (aNode.toString().contains("reply") ) {
-                            topic.setTitle(aNode.text());
-                            String topicIdString = aNode.attr("href");
-                            String[] subArray = topicIdString.split("#");
-                            topic.setId(Integer.parseInt(subArray[0].replace("/t/", "")));
-                            topic.setReplies(Integer.parseInt(subArray[1].replace("reply", "")));
-                        }
-                    }
-                }
-
-                Elements spanNodes = tdNode.getElementsByTag("span");
-                for (Element spanNode : spanNodes) {
-                    String contentString = spanNode.text();
-                    if (contentString.contains("最后回复")
-                            || contentString.contains("前")
-                            || contentString.contains("  •  ") ) {
-                        String[] components = contentString.split("  •  ");
-                        if (parseNode && components.length <= 2) continue;
-                        else if (!parseNode && components.length <= 1) continue;
-                        String dateString = parseNode ? components[2] : components[1];
-                        long created = System.currentTimeMillis() / 1000;
-                        String[] stringArray = dateString.split(" ");
-                        if (stringArray.length > 1) {
-                            int how = Integer.parseInt(stringArray[0]);
-                            String subString = stringArray[1].substring(0, 1);
-                            if (subString.equals("分")) {
-                                created -= 60 * how;
-                            } else if (subString.equals("小")) {
-                                created -= 3600 * how;
-                            } else if (subString.equals("天")) {
-                                created -= 24 * 3600 * how;
-                            }
-                        }
-                        topic.setLast_modified(created);
-                    }
-                }
-            }
+        //UserName
+        Elements memberElements = el.select("a[href^=/member/]");
+        member.setUsername(memberElements.attr("href").replace("/member/",""));
+        //头像
+        Elements avatarElements = el.select("img.avatar");
+        member.setAvatar_normal(avatarElements.attr("src"));
+        //nodename
+        Elements nodeNameElements = el.select("a.node");
+        node.setName(nodeNameElements.attr("href").replace("/go/", ""));
+        node.setTitle(nodeNameElements.text());
+        //主题
+        Elements topicTitleElements = el.select("a[href^=/t/]");
+        topic.setTitle(topicTitleElements.text());
+        String[] subArray = topicTitleElements.attr("href").split("#");
+        topic.setId(Integer.parseInt(subArray[0].replace("/t/", "")));
+        topic.setReplies(Integer.parseInt(subArray[1].replace("reply", "")));
+        //Last_modified
+        Elements createdElements = el.select("span.topic_info");
+        String[] createdArray = createdElements.text().split("  •  ");
+        if(createdArray.length < 3){
+            topic.setLast_modified_string("");
+        }else{
+            topic.setLast_modified_string(createdArray[2]);
         }
-
         topic.setMember(member);
         topic.setNode(node);
 

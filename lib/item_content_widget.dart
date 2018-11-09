@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_v2ex/reply_bean.dart';
 import 'package:flutter_v2ex/simple_html_text_widget.dart';
 import 'package:flutter_v2ex/time_utils.dart';
-import 'package:flutter_v2ex/html_text_widget.dart';
 import 'package:flutter_v2ex/latest_bean.dart';
 import 'package:flutter_v2ex/topic_content_bean.dart';
 import 'package:http/http.dart' as http;
@@ -42,7 +41,7 @@ class ItemContentWidgetState extends State {
         title: Text("主题详情"),
       ),
       body: topicContent == null
-          ? Container()
+          ? Center(child: CircularProgressIndicator())
           : ListView.builder(
               itemBuilder: (context, position) {
                 if (position == 0) {
@@ -57,10 +56,11 @@ class ItemContentWidgetState extends State {
                           children: <Widget>[
                             IconInfoWidget(
                               iconUrl:
-                                  "https:${topicContent.latest.member.avatarNormal}",
+                                  "http:${topicContent.latest.member.avatarNormal}",
                               userName: topicContent.latest.member.userName,
                               replies: topicContent.latest.replies,
                               created: topicContent.latest.created * 1000,
+                              createdString: topicContent.latest.createdString,
                             ),
                             Padding(
                                 padding: EdgeInsets.only(top: 3.0),
@@ -82,7 +82,8 @@ class ItemContentWidgetState extends State {
                               fontSize: 14.0,
                               color: Colors.black54,
                               fontWeight: FontWeight.normal,
-                              fontStyle: FontStyle.normal),
+                              fontStyle: FontStyle.normal,
+                              decoration: TextDecoration.none),
                         ),
                         Divider()
                       ],
@@ -139,6 +140,7 @@ class ReplyItemWidget extends StatelessWidget {
             ReplyUserInfoWidget(
                 userName: reply.member.userName,
                 created: reply.created * 1000,
+                createdString: reply.createdString,
                 position: position),
             Container(
                 margin: EdgeInsets.only(top: 3.0),
@@ -162,9 +164,10 @@ class ReplyUserInfoWidget extends StatelessWidget {
   final String userName;
   final int created;
   final int position;
+  final String createdString;
 
   const ReplyUserInfoWidget(
-      {Key key, this.userName, this.created, this.position})
+      {Key key, this.userName, this.created, this.position, this.createdString})
       : super(key: key);
 
   @override
@@ -180,7 +183,7 @@ class ReplyUserInfoWidget extends StatelessWidget {
             Container(
               margin: EdgeInsets.only(left: 5.0),
               child: Text(
-                getDiffTime(created),
+                createdString == null ? getDiffTime(created) : createdString,
                 style: TextStyle(
                   fontSize: 10.0,
                   color: Color.fromARGB(255, 153, 153, 153),
@@ -221,9 +224,15 @@ class IconInfoWidget extends StatelessWidget {
   final String userName;
   final int replies;
   final int created;
+  final String createdString;
 
   const IconInfoWidget(
-      {Key key, this.iconUrl, this.userName, this.replies, this.created})
+      {Key key,
+      this.iconUrl,
+      this.userName,
+      this.replies,
+      this.created,
+      this.createdString})
       : super(key: key);
 
   @override
@@ -244,7 +253,10 @@ class IconInfoWidget extends StatelessWidget {
               Padding(
                 padding: EdgeInsets.only(top: 4.0),
                 child: Text(
-                  getDiffTime(created) + " $replies个回复",
+                  (createdString == null
+                          ? getDiffTime(created)
+                          : createdString) +
+                      " $replies个回复",
                   style: TextStyle(
                       fontSize: 11.0,
                       color: Color.fromARGB(255, 153, 153, 153)),
