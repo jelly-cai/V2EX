@@ -3,20 +3,24 @@ import 'package:flutter/material.dart';
 class SimpleHtmlText extends StatelessWidget {
   final String data;
 
-  const SimpleHtmlText({Key key, this.data}) : super(key: key);
+  ///默认的TextStyle
+  final TextStyle defaultStyle;
+
+  const SimpleHtmlText({Key key, this.data, this.defaultStyle}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    TextSpan textSpan = parseHtml(data);
+    TextSpan textSpan = parseHtml(data, null);
     return RichText(
         text: TextSpan(
-            style: TextStyle(color: Colors.black), children: [textSpan]));
+            style: defaultStyle, children: [textSpan]));
   }
 
-  parseHtml(String data) {
-    if (data.isEmpty) {
-      return TextSpan(text: null);
+  parseHtml(String data, TextStyle style) {
+    int index = data.indexOf("<");
+    if (data.isEmpty || index < 0) {
+      return TextSpan(text: "");
     }
 
     RegExp startExp = RegExp(
@@ -26,9 +30,6 @@ class SimpleHtmlText extends StatelessWidget {
     RegExp attrExp = RegExp(
         r'([-A-Za-z0-9_]+)(?:\s*=\s*(?:(?:"((?:\\.|[^"])*)")' +
             r"|(?:'((?:\\.|[^'])*)')|([^>\s]+)))?");
-    RegExp styleExp = RegExp(r'([a-zA-Z\-]+)\s*:\s*([^;]*)');
-    RegExp colorExp = RegExp(r'^#([a-fA-F0-9]{6})$');
-    int index = data.indexOf("<");
     TextSpan textSpan;
 
     if (data.startsWith("<")) {
@@ -36,91 +37,109 @@ class SimpleHtmlText extends StatelessWidget {
       Match matchStart = startExp.firstMatch(data);
       if (matchStart != null) {
         String tag = matchStart[0];
+        String tagName = matchStart[1];
         data = data.substring(tag.length);
         if (tag == '<br>') {
-          textSpan = parseHtml(data);
+          textSpan = parseHtml(data, null);
         } else {
-          Map attrs = {};
-
-          Iterable<Match> matches = attrExp.allMatches(matchStart[2]);
-
-          if (matches != null) {
-            for (Match match in matches) {
-              String attribute = match[1];
-              String value;
-
-              if (match[2] != null) {
-                value = match[2];
-              } else if (match[3] != null) {
-                value = match[3];
-              } else if (match[4] != null) {
-                value = match[4];
-              }
-
-              attrs[attribute] = value;
-            }
-          }
-          if (attrs.length != 0 && attrs['style'] != null) {
-            Color color = new Color(0xFF000000);
-            FontWeight fontWeight = FontWeight.normal;
-            FontStyle fontStyle = FontStyle.normal;
-            TextDecoration textDecoration = TextDecoration.none;
-            double fontSize = 12.0;
-            String style = attrs['style'];
-            matches = styleExp.allMatches(style);
-            for (Match match in matches) {
-              String param = match[1].trim();
-              String value = match[2].trim();
-
-              switch (param) {
-                case 'color':
-                  if (colorExp.hasMatch(value)) {
-                    value = value.replaceAll('#', '').trim();
-                    color = Color(int.parse('0xFF' + value));
-                  }
-                  break;
-                case 'font-weight':
-                  fontWeight =
-                      (value == 'bold') ? FontWeight.bold : FontWeight.normal;
-                  break;
-                case 'font-style':
-                  fontStyle =
-                      (value == 'italic') ? FontStyle.italic : FontStyle.normal;
-                  break;
-                case 'text-decoration':
-                  textDecoration = (value == 'underline')
-                      ? TextDecoration.underline
-                      : TextDecoration.none;
-                  break;
-                case 'font-size':
-                  fontSize = double.parse(value);
-                  break;
-              }
-            }
-            textSpan = TextSpan(
-                text: null,
-                style: TextStyle(
-                    fontSize: fontSize,
-                    color: color,
-                    fontWeight: fontWeight,
-                    fontStyle: fontStyle,
-                    decoration: textDecoration),
-                children: [parseHtml(data)]);
-          } else {
-            textSpan = TextSpan(text: null, children: [parseHtml(data)]);
-          }
+          TextStyle textStyle = parseTagStyle(tagName);
+          textSpan = TextSpan(
+              text: "",
+              style: textStyle,
+              children: [parseHtml(data, null)]);
         }
       } else {
         Match matchIgnore = ignoreExp.firstMatch(data);
         String tag = matchIgnore[0];
+
         data = data.substring(tag.length);
-        textSpan = parseHtml(data);
+        data = parseEndWrapTag(data,tag);
+
+        TextStyle textStyle = parseEndStyleTag(tag);
+
+        textSpan = parseHtml(data, textStyle);
       }
-    } else {
+    } else{
       String text = data.substring(0, index);
       data = data.substring(index);
-      textSpan = TextSpan(text: text, children: [parseHtml(data)]);
+      textSpan =
+          TextSpan(text: text, style: style, children: [parseHtml(data, null)]);
     }
     return textSpan;
+  }
+
+  ///结束特殊样式标签处理,需要把后面的恢复原样
+  parseEndStyleTag(String tag){
+    TextStyle textStyle;
+    if (tag == "</strong>") {
+      textStyle = TextStyle(fontWeight: defaultStyle.fontWeight);
+    }else if(tag == "</a>"){
+      textStyle = TextStyle(color: defaultStyle.color,decoration: defaultStyle.decoration);
+    }
+    return textStyle;
+  }
+
+  ///结束空格标签的处理
+  parseEndWrapTag(String data,String tag){
+    if (tag == "</p>") {
+      data = "\n" + data;
+    } else if (tag == "</h2>") {
+      data = "\n" + data;
+    } else if(tag == "</h3>"){
+      data = "\n" + data;
+    }
+    return data;
+  }
+
+  ///解析特殊tag
+  parseTagStyle(String tag) {
+    Color color;
+    FontWeight fontWeight;
+    FontStyle fontStyle;
+    TextDecoration textDecoration;
+    double fontSize;
+
+    switch (tag) {
+      case 'a':
+        color = new Color(int.parse('0xFF1965B5'));
+        textDecoration = TextDecoration.underline;
+        break;
+      case 'b':
+      case 'strong':
+        fontWeight = FontWeight.bold;
+        color = Colors.black;
+        break;
+      case 'i':
+      case 'em':
+        fontStyle = FontStyle.italic;
+        break;
+      case 'u':
+        textDecoration = TextDecoration.underline;
+        break;
+      case 'h2':
+        fontSize = 18.0;
+        fontWeight = FontWeight.w500;
+        color = Colors.black;
+        break;
+      case 'h3':
+        fontSize = 17.0;
+        fontWeight = FontWeight.w500;
+        color = Colors.black;
+        break;
+      case 'p':
+        color = defaultStyle.color;
+        fontWeight = defaultStyle.fontWeight;
+        fontStyle = defaultStyle.fontStyle;
+        textDecoration = defaultStyle.decoration;
+        fontSize = defaultStyle.fontSize;
+        break;
+    }
+
+    return TextStyle(
+        fontSize: fontSize,
+        color: color,
+        fontWeight: fontWeight,
+        fontStyle: fontStyle,
+        decoration: textDecoration);
   }
 }

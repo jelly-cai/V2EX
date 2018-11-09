@@ -106,7 +106,7 @@ public class TopicWithReplyListModel {
         Elements contentNodes = body.getElementsByClass("topic_content");
         if (contentNodes != null && contentNodes.size() > 0) {
             topic.setContent(contentNodes.get(0).text());
-            topic.setContent_rendered(ContentUtils.formatContent(contentNodes.get(0).html()));
+            topic.setContent_rendered(ContentUtils.formatContent(contentNodes.get(0).children().html()));
         }
         //回复数
         Elements boxNodes = body.getElementsByClass("box");

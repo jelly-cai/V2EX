@@ -69,15 +69,20 @@ class ItemContentWidgetState extends State {
                         ),
                         Padding(
                           padding: EdgeInsets.only(top: 10.0),
-                          child: HtmlTextWidget(
-                            data:
-                                '<span style="font-size:17.0">${topicContent.latest.title}</span>',
+                          child: Text(
+                            topicContent.latest.title,
+                            style:
+                                TextStyle(fontSize: 17.0, color: Colors.black),
                           ),
                         ),
                         Divider(),
                         SimpleHtmlText(
-                          data:
-                              '<span style="font-size:14.0">${topicContent.latest.contentRendered}</span>',
+                          data: topicContent.latest.contentRendered,
+                          defaultStyle: TextStyle(
+                              fontSize: 14.0,
+                              color: Colors.black54,
+                              fontWeight: FontWeight.normal,
+                              fontStyle: FontStyle.normal),
                         ),
                         Divider()
                       ],
@@ -137,7 +142,13 @@ class ReplyItemWidget extends StatelessWidget {
                 position: position),
             Container(
                 margin: EdgeInsets.only(top: 3.0),
-                child: HtmlTextWidget(data: '<span style="font-size:14.0">${reply.contentRendered}</span>')),
+                child: SimpleHtmlText(
+                  data: "<span>${reply.contentRendered}</span>",
+                  defaultStyle: TextStyle(
+                      fontSize: 14.0,
+                      color: Colors.black,
+                      decoration: TextDecoration.none),
+                )),
             Divider()
           ],
         ))
