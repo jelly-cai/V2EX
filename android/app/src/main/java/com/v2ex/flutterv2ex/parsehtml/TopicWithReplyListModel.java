@@ -1,6 +1,6 @@
 package com.v2ex.flutterv2ex.parsehtml;
 
-import android.util.Log;
+import android.text.TextUtils;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -47,6 +47,11 @@ public class TopicWithReplyListModel {
         totalPage = pages[1];
     }
 
+    /**
+     * 解析回复列表
+     * @param element
+     * @return
+     */
     private ReplyModel parseReplyModel(Element element) {
         ReplyModel reply = new ReplyModel();
         reply.setMember(new MemberModel());
@@ -68,6 +73,12 @@ public class TopicWithReplyListModel {
         return reply;
     }
 
+    /**
+     * 解析主题
+     * @param doc
+     * @param body
+     * @throws Exception
+     */
     private void parseTopicModel(Document doc, Element body) throws Exception {
         Elements header = body.getElementsByClass("header");
         if (header.size() == 0) throw new Exception("fail to parse topic");
@@ -107,6 +118,9 @@ public class TopicWithReplyListModel {
         if (contentNodes != null && contentNodes.size() > 0) {
             topic.setContent(contentNodes.get(0).text());
             topic.setContent_rendered(ContentUtils.formatContent(contentNodes.get(0).children().html()));
+            if(TextUtils.isEmpty(topic.getContent_rendered())){
+                topic.setContent_rendered(contentNodes.get(0).html());
+            }
         }
         //回复数
         Elements boxNodes = body.getElementsByClass("box");

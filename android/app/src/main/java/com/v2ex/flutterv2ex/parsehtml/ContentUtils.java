@@ -1,10 +1,12 @@
 package com.v2ex.flutterv2ex.parsehtml;
 
 import org.jsoup.nodes.Element;
+import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by yw on 2015/5/28.
@@ -16,6 +18,14 @@ public class ContentUtils {
                 .replace("href=\"/i/", "href=\"https://i.v2ex.co/")
                 .replace("href=\"/t/", "href=\"http://www.v2ex.com/t/")
                 .replace("href=\"/go/", "href=\"http://www.v2ex.com/go/");
+    }
+
+    public static String parseChildNodes(List<Node> nodes){
+        String result = "";
+        for(Node node : nodes){
+            result += node.outerHtml();
+        }
+        return result;
     }
 
     public static int[] parsePage(Element body){

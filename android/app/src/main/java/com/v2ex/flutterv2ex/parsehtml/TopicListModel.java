@@ -1,6 +1,6 @@
 package com.v2ex.flutterv2ex.parsehtml;
 
-import android.util.Log;
+
 
 
 import org.jsoup.Jsoup;
@@ -8,10 +8,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.regex.Pattern;
 
 /**
  * 话题列表类,网页解析得到
@@ -24,7 +21,7 @@ public class TopicListModel extends ArrayList<TopicModel> {
     public int mCurrentPage = 1;
     public int mTotalPage = 1;
 
-    public void parse(String responseBody) throws Exception {
+    public void parse(String responseBody){
         Document doc = Jsoup.parse(responseBody);
         Element body = doc.body();
         Elements elements = body.getElementsByAttributeValue("class", "cell item");
@@ -38,8 +35,14 @@ public class TopicListModel extends ArrayList<TopicModel> {
         mTotalPage = pages[1];
     }
 
-    private TopicModel parseTopicModel(Element el, boolean parseNode, NodeModel node) throws Exception {
-        Elements tdNodes = el.getElementsByTag("td");
+    /**
+     * 解析主题
+     * @param el
+     * @param parseNode
+     * @param node
+     * @return
+     */
+    private TopicModel parseTopicModel(Element el, boolean parseNode, NodeModel node){
         TopicModel topic = new TopicModel();
         MemberModel member = new MemberModel();
         if (parseNode) node = new NodeModel();

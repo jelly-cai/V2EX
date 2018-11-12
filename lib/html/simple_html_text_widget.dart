@@ -18,9 +18,12 @@ class SimpleHtmlText extends StatelessWidget {
   }
 
   parseHtml(String data, TextStyle style) {
+    if(data == null){
+      return TextSpan(text: "");
+    }
     int index = data.indexOf("<");
     if (data.isEmpty || index < 0) {
-      return TextSpan(text: "");
+      return TextSpan(text: data);
     }
 
     RegExp startExp = RegExp(

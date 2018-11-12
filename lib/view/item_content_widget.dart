@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_v2ex/reply_bean.dart';
-import 'package:flutter_v2ex/simple_html_text_widget.dart';
-import 'package:flutter_v2ex/time_utils.dart';
-import 'package:flutter_v2ex/latest_bean.dart';
-import 'package:flutter_v2ex/topic_content_bean.dart';
+import 'package:flutter_v2ex/bean/reply_bean.dart';
+import 'package:flutter_v2ex/html/simple_html_text_widget.dart';
+import 'package:flutter_v2ex/util/time_utils.dart';
+import 'package:flutter_v2ex/bean/latest_bean.dart';
+import 'package:flutter_v2ex/bean/topic_content_bean.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 

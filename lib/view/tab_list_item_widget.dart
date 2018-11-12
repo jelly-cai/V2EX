@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_v2ex/time_utils.dart';
-import 'package:flutter_v2ex/item_content_widget.dart';
-import 'package:flutter_v2ex/latest_bean.dart';
+import 'package:flutter_v2ex/util/time_utils.dart';
+import 'package:flutter_v2ex/view/item_content_widget.dart';
+import 'package:flutter_v2ex/bean/latest_bean.dart';
 
 ///首页列表Item
 class TabListItemWidget extends StatelessWidget {
@@ -12,45 +12,38 @@ class TabListItemWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return GestureDetector(
-      onTap: () {
-        Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-          return ItemContentWidget(latest: latest);
-        }));
-      },
-      child: Row(
-        mainAxisSize: MainAxisSize.max,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          ItemIconWidget(iconUrl: "http:${latest.member.avatarNormal}"),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  latest.title,
-                  textAlign: TextAlign.left,
-                  style: TextStyle(fontSize: 15.0),
+    return Row(
+      mainAxisSize: MainAxisSize.max,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: <Widget>[
+        ItemIconWidget(iconUrl: "http:${latest.member.avatarNormal}"),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                latest.title,
+                textAlign: TextAlign.left,
+                style: TextStyle(fontSize: 15.0),
+              ),
+              Container(
+                margin: EdgeInsets.only(top: 5.0),
+                child: Row(
+                  children: <Widget>[
+                    NodeTitleTextWidget(nodeTitle: latest.node.title),
+                    UserNameTextWidget(userName: latest.member.userName),
+                    DiffTimeTextWidget(
+                        lastModified: latest.lastModified * 1000,
+                        lastModifiedString: latest.lastModifiedString)
+                  ],
                 ),
-                Container(
-                  margin: EdgeInsets.only(top: 5.0),
-                  child: Row(
-                    children: <Widget>[
-                      NodeTitleTextWidget(nodeTitle: latest.node.title),
-                      UserNameTextWidget(userName: latest.member.userName),
-                      DiffTimeTextWidget(
-                          lastModified: latest.lastModified * 1000,
-                          lastModifiedString: latest.lastModifiedString)
-                    ],
-                  ),
-                )
-              ],
-            ),
+              )
+            ],
           ),
-          RepliesTextWidget(replies: latest.replies)
-        ],
-      ),
+        ),
+        RepliesTextWidget(replies: latest.replies)
+      ],
     );
   }
 }

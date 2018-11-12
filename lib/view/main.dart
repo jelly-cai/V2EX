@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_v2ex/item_content_widget.dart';
-import 'package:flutter_v2ex/latest_bean.dart';
-import 'package:flutter_v2ex/tab_bean.dart';
-import 'package:flutter_v2ex/tab_list_widget.dart';
+import 'package:flutter_v2ex/view/item_content_widget.dart';
+import 'package:flutter_v2ex/bean/latest_bean.dart';
+import 'package:flutter_v2ex/bean/tab_bean.dart';
+import 'package:flutter_v2ex/view/tab_list_widget.dart';
 
 void main() => runApp(new MyApp());
 

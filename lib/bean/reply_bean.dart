@@ -1,4 +1,4 @@
-import 'package:flutter_v2ex/member_bean.dart';
+import 'package:flutter_v2ex/bean/member_bean.dart';
 
 class Reply {
   String content;

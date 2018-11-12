@@ -1,5 +1,5 @@
-import 'package:flutter_v2ex/latest_bean.dart';
-import 'package:flutter_v2ex/reply_bean.dart';
+import 'package:flutter_v2ex/bean/latest_bean.dart';
+import 'package:flutter_v2ex/bean/reply_bean.dart';
 
 class TopicContent {
   int currentPage;
