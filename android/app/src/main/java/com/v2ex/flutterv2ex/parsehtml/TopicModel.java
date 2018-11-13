@@ -13,6 +13,7 @@ public class TopicModel {
     private String last_modified_string;
     private String content;
     private String content_rendered;
+    private String lastReply;
 
     public int getId() {
         return id;
@@ -100,5 +101,13 @@ public class TopicModel {
 
     public String getCreatedString() {
         return createdString;
+    }
+
+    public void setLastReply(String lastReply) {
+        this.lastReply = lastReply;
+    }
+
+    public String getLastReply() {
+        return lastReply;
     }
 }

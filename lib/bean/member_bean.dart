@@ -14,6 +14,7 @@ class Member {
   String location;
   String btc;
   int id;
+  String info;
 
   Member(
       {this.userName,
@@ -30,7 +31,8 @@ class Member {
       this.avatarMini,
       this.location,
       this.btc,
-      this.id});
+      this.id,
+      this.info});
 
   factory Member.fromJson(Map<String, dynamic> json) {
     return Member(
@@ -48,6 +50,7 @@ class Member {
         avatarMini: json['avatar_mini'],
         location: json['location'],
         btc: json['btc'],
-        id: json['id']);
+        id: json['id'],
+        info: json['info']);
   }
 }

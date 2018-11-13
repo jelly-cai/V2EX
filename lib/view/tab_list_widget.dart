@@ -63,7 +63,6 @@ class TabListWidgetState extends State with AutomaticKeepAliveClientMixin{
   ///获取List数据
   getListData() async{
     http.Response response = await http.get(tabBean.url);
-    print(response.body);
     if(this.mounted){
       if (tabBean.type == TabBean.JSON) {
         parseJson(response.body);
@@ -85,7 +84,6 @@ class TabListWidgetState extends State with AutomaticKeepAliveClientMixin{
   parseHtml(htmlString) async {
     const platform = const MethodChannel("com.v2ex/android");
     String jsonString = await platform.invokeMethod("parseTopicHtml", {"response": htmlString});
-    print(jsonString);
     parseJson(jsonString);
   }
 

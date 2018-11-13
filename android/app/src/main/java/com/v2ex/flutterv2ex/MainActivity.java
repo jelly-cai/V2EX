@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import com.google.gson.Gson;
 import com.v2ex.flutterv2ex.parsehtml.TopicListModel;
 import com.v2ex.flutterv2ex.parsehtml.TopicWithReplyListModel;
+import com.v2ex.flutterv2ex.parsehtml.UserInfoModel;
 
 import io.flutter.app.FlutterActivity;
 import io.flutter.plugin.common.MethodCall;
@@ -24,39 +25,54 @@ public class MainActivity extends FlutterActivity {
             @Override
             public void onMethodCall(MethodCall methodCall, MethodChannel.Result result) {
                 if (methodCall.method.equals("parseTopicHtml")) {
-                    parseTopicHtml(methodCall,result);
+                    parseTopicHtml(methodCall, result);
                 } else if (methodCall.method.equals("parseReplyHtml")) {
-                    parseReplyHtml(methodCall,result);
+                    parseReplyHtml(methodCall, result);
+                } else if (methodCall.method.equals("parseUserInfoHtml")) {
+                    parseUserInfoHtml(methodCall, result);
                 }
             }
         });
     }
 
     /**
-     * 解析主题列表
+     * 解析用户信息
      * @param methodCall
      * @param result
      */
-    private void parseTopicHtml(MethodCall methodCall,MethodChannel.Result result){
+    private void parseUserInfoHtml(MethodCall methodCall, MethodChannel.Result result) {
+        if (checkResponseParam(methodCall)) {
+            UserInfoModel userInfoModel = new UserInfoModel();
+            userInfoModel.parseResponse(methodCall.argument("response").toString());
+            Gson gson = new Gson();
+            String jsonResult = gson.toJson(userInfoModel);
+            result.success(jsonResult);
+        }
+    }
+
+    /**
+     * 解析主题列表
+     *
+     * @param methodCall
+     * @param result
+     */
+    private void parseTopicHtml(MethodCall methodCall, MethodChannel.Result result) {
         if (checkResponseParam(methodCall)) {
             TopicListModel topicListModel = new TopicListModel();
-            try {
-                topicListModel.parse(methodCall.argument("response").toString());
-                Gson gson = new Gson();
-                String jsonResult = gson.toJson(topicListModel);
-                result.success(jsonResult);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            topicListModel.parse(methodCall.argument("response").toString());
+            Gson gson = new Gson();
+            String jsonResult = gson.toJson(topicListModel);
+            result.success(jsonResult);
         }
     }
 
     /**
      * 解析回复列表
+     *
      * @param methodCall
      * @param result
      */
-    private void parseReplyHtml(MethodCall methodCall,MethodChannel.Result result){
+    private void parseReplyHtml(MethodCall methodCall, MethodChannel.Result result) {
         if (checkResponseParam(methodCall) && checkIdParam(methodCall)) {
             TopicWithReplyListModel topicWithReplyListModel = new TopicWithReplyListModel();
             topicWithReplyListModel.parse(methodCall.argument("response").toString(), Integer.parseInt(methodCall.argument("id").toString()));

@@ -1,5 +1,7 @@
 package com.v2ex.flutterv2ex.parsehtml;
 
+import android.text.TextUtils;
+
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
@@ -13,22 +15,14 @@ import java.util.List;
  */
 public class ContentUtils {
 
-    public static String formatContent(String content){
+    public static String formatContent(String content) {
         return content.replace("href=\"/member/", "href=\"http://www.v2ex.com/member/")
                 .replace("href=\"/i/", "href=\"https://i.v2ex.co/")
                 .replace("href=\"/t/", "href=\"http://www.v2ex.com/t/")
                 .replace("href=\"/go/", "href=\"http://www.v2ex.com/go/");
     }
 
-    public static String parseChildNodes(List<Node> nodes){
-        String result = "";
-        for(Node node : nodes){
-            result += node.outerHtml();
-        }
-        return result;
-    }
-
-    public static int[] parsePage(Element body){
+    public static int[] parsePage(Element body) {
         int currentPage = 1, totalPage = 1;
         Elements elements = body.getElementsByClass("page_current");
         for (Element el : elements) {
@@ -46,8 +40,8 @@ public class ContentUtils {
             String text = el.text();
             try {
                 int page = Integer.parseInt(text);
-                if(totalPage < page)
-                   totalPage = page;
+                if (totalPage < page)
+                    totalPage = page;
             } catch (Exception e) {
             }
         }
@@ -75,6 +69,43 @@ public class ContentUtils {
             }
         }
         return created;
+    }
+
+    public static String parseNodeTitle(String title){
+        String[] strings = title.split("  ");
+        if(strings.length > 1){
+            return strings[1];
+        }else{
+            return title;
+        }
+    }
+
+    /**
+     * 解析标题
+     * @param title
+     * @return
+     */
+    public static String parseTitle(String title) {
+        String[] strings = title.split(" ");
+        if (isNumeric(strings[strings.length - 1])) {
+            return title.replace(" " + strings[strings.length - 1], "");
+        }else{
+            return title;
+        }
+    }
+
+    /**
+     * 判断是否为数字
+     * @param str
+     * @return
+     */
+    public static boolean isNumeric(String str){
+        for (int i = str.length();--i>=0;){
+            if (!Character.isDigit(str.charAt(i))){
+                return false;
+            }
+        }
+        return true;
     }
 
 }

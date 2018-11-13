@@ -5,6 +5,7 @@ import 'package:flutter_v2ex/html/simple_html_text_widget.dart';
 import 'package:flutter_v2ex/util/time_utils.dart';
 import 'package:flutter_v2ex/bean/latest_bean.dart';
 import 'package:flutter_v2ex/bean/topic_content_bean.dart';
+import 'package:flutter_v2ex/view/circle_icon_widget.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -132,7 +133,9 @@ class ReplyItemWidget extends StatelessWidget {
         Container(
             margin: EdgeInsets.only(right: 5.0),
             child: CircleIconWidget(
-                iconUrl: "https:${reply.member.avatarNormal}")),
+                iconUrl: "https:${reply.member.avatarNormal}",
+                width: 35.0,
+                height: 35.0)),
         Expanded(
             child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -198,26 +201,6 @@ class ReplyUserInfoWidget extends StatelessWidget {
   }
 }
 
-///圆形头像
-class CircleIconWidget extends StatelessWidget {
-  final String iconUrl;
-
-  const CircleIconWidget({Key key, this.iconUrl}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    // TODO: implement build
-    return ClipOval(
-      child: Image.network(
-        iconUrl,
-        width: 35.0,
-        height: 35.0,
-        fit: BoxFit.fitWidth,
-      ),
-    );
-  }
-}
-
 ///头像用户信息
 class IconInfoWidget extends StatelessWidget {
   final String iconUrl;
@@ -240,7 +223,7 @@ class IconInfoWidget extends StatelessWidget {
     // TODO: implement build
     return Row(
       children: <Widget>[
-        CircleIconWidget(iconUrl: iconUrl),
+        CircleIconWidget(iconUrl: iconUrl, width: 35.0, height: 35.0),
         Padding(
           padding: EdgeInsets.only(left: 10.0, top: 3.0),
           child: Column(
