@@ -9,6 +9,7 @@ import 'package:flutter_v2ex/common/view/circle_icon_widget.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+///主题内容
 class ItemContentWidget extends StatefulWidget {
   final Latest latest;
 
@@ -92,6 +93,14 @@ class ItemContentWidgetState extends State {
                   );
                 }
 
+                ///查看更多
+                if (topicContent.totalPage > 1 &&
+                    position == getListLength() - 1) {
+                  return Padding(
+                      padding: EdgeInsets.all(5.0),
+                      child: Center(child: Text("查看更多")));
+                }
+
                 ///回复对象
                 Reply reply = topicContent.replies[position - 1];
                 return Container(
@@ -99,9 +108,15 @@ class ItemContentWidgetState extends State {
                   child: ReplyItemWidget(reply: reply, position: position),
                 );
               },
-              itemCount: topicContent.replies.length + 1,
+              itemCount: getListLength(),
             ),
     );
+  }
+
+  ///获取ListView的长度
+  getListLength() {
+    return (topicContent.replies.length + 1) +
+        (topicContent.totalPage > 1 ? 1 : 0);
   }
 
   ///获取List数据

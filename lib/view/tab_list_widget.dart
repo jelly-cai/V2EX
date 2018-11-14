@@ -8,7 +8,7 @@ import 'package:flutter_v2ex/bean/tab_bean.dart';
 import 'package:flutter_v2ex/view/tab_list_item_widget.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
-
+///Tab页面
 class TabListWidget extends StatefulWidget {
   final TabBean tabBean;
 

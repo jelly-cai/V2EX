@@ -98,7 +98,7 @@ class UserInfoWidgetState extends State {
                                 )
                               ])));
                 },
-                itemCount: userInfo == null ? 0 : userInfo.topics.length + 2,
+                itemCount: userInfo.topics.length + 2,
               ));
   }
 
@@ -153,9 +153,7 @@ class ItemTitleWidget extends StatelessWidget {
     return Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          Expanded(
-              child: Text(title,
-                  style: ItemTextTitleStyle())),
+          Expanded(child: Text(title, style: ItemTextTitleStyle())),
           RepliesTextWidget(replies: replies)
         ]);
   }
@@ -210,7 +208,10 @@ class UserInfoHeaderWidget extends StatelessWidget {
           Text(userName, style: TextStyle(fontSize: 20.0)),
           Container(
               margin: EdgeInsets.only(top: 5.0),
-              child: Text(info, style: TextStyle(fontSize: 13.0)))
+              child: Text(info,
+                  style: TextStyle(
+                      fontSize: 13.0,
+                      color: Color.fromARGB(255, 153, 153, 153))))
         ],
       ))
     ]);

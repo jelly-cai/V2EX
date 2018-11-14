@@ -3,32 +3,32 @@ import 'package:flutter_v2ex/view/item_content_widget.dart';
 import 'package:flutter_v2ex/bean/tab_bean.dart';
 import 'package:flutter_v2ex/view/tab_list_widget.dart';
 
-void main() => runApp(new MyApp());
+void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return new MaterialApp(
-      title: 'Flutter Demo',
-      theme: new ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: StartPage(),
-      routes: {
-        "/item_content": (context) => ItemContentWidget()
-      }
-    );
+    return MaterialApp(
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: StartPage(),
+        routes: {"/item_content": (context) => ItemContentWidget()});
   }
 }
 
 class StartPage extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
     Future.delayed(Duration(milliseconds: 500), () {
-      Navigator.of(context).
-          pushAndRemoveUntil(MaterialPageRoute(builder: (context) => MyHomePage(title: "V2EX",)),(route) => route == null);
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+              builder: (context) => MyHomePage(
+                    title: "V2EX",
+                  )),
+          (route) => route == null);
     });
     return Container(color: Colors.white);
   }
@@ -57,17 +57,24 @@ class MyHomePage extends StatelessWidget {
     // TODO: implement build
     return DefaultTabController(
         child: Scaffold(
-            appBar: new AppBar(
-              title: new Text(title),
-              bottom: TabBar(
-                tabs: _tabs.map((tab) => Tab(text: tab.title)).toList(),
-                isScrollable: true,
-              ),
-            ),
-            body: TabBarView(
-              children:
-                  _tabs.map((tab) => TabListWidget(tabBean: tab)).toList(),
-            )),
+            body: NestedScrollView(
+                headerSliverBuilder: (context, isScrolled) {
+                  return [
+                    SliverAppBar(
+                        title: Text(title),
+                        floating: true,
+                        pinned: true,
+                        bottom: TabBar(
+                          tabs:
+                              _tabs.map((tab) => Tab(text: tab.title)).toList(),
+                          isScrollable: true,
+                        ))
+                  ];
+                },
+                body: TabBarView(
+                  children:
+                      _tabs.map((tab) => TabListWidget(tabBean: tab)).toList(),
+                ))),
         length: _tabs.length);
   }
 }
