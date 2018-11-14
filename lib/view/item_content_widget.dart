@@ -5,7 +5,7 @@ import 'package:flutter_v2ex/html/simple_html_text_widget.dart';
 import 'package:flutter_v2ex/util/time_utils.dart';
 import 'package:flutter_v2ex/bean/latest_bean.dart';
 import 'package:flutter_v2ex/bean/topic_content_bean.dart';
-import 'package:flutter_v2ex/view/circle_icon_widget.dart';
+import 'package:flutter_v2ex/common/view/circle_icon_widget.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 

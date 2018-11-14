@@ -10,6 +10,9 @@ import org.jsoup.select.Elements;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 用户信息界面数据解析
+ */
 public class UserInfoModel {
     MemberModel member;
     List<TopicModel> topics = new ArrayList<>();
@@ -72,7 +75,7 @@ public class UserInfoModel {
             }
             //最后回复
             if(splits.length > 3){
-                topicModel.setLastReply(splits[3].replace(" ",""));
+                topicModel.setLastReply(splits[3].replace(" ","").replace("最后回复来自",""));
             }
 
             topics.add(topicModel);

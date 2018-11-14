@@ -3,10 +3,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_v2ex/bean/latest_bean.dart';
 import 'package:flutter_v2ex/bean/user_info_bean.dart';
 import 'package:flutter_v2ex/bean/member_bean.dart';
+import 'package:flutter_v2ex/common/style/item_text_style.dart';
+import 'package:flutter_v2ex/common/view/item_hint_point_widget.dart';
 import 'package:flutter_v2ex/view/item_content_widget.dart';
-import 'package:flutter_v2ex/view/node_title_text_widget.dart';
-import 'package:flutter_v2ex/view/replies_text_widget.dart';
-import 'package:flutter_v2ex/view/round_rect_icon_widget.dart';
+import 'package:flutter_v2ex/common/view/node_title_text_widget.dart';
+import 'package:flutter_v2ex/common/view/replies_text_widget.dart';
+import 'package:flutter_v2ex/common/view/round_rect_icon_widget.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -64,7 +66,8 @@ class UserInfoWidgetState extends State {
 
                   return GestureDetector(
                       onTap: () {
-                        Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+                        Navigator.of(context)
+                            .push(MaterialPageRoute(builder: (context) {
                           return ItemContentWidget(latest: topic);
                         }));
                       },
@@ -129,11 +132,10 @@ class ItemInfoWidget extends StatelessWidget {
         : Row(children: <Widget>[
             Text(
               createdString == null ? "" : createdString,
-              style: TextStyle(fontSize: 12.0),
+              style: ItemTextHintStyle(),
             ),
-            Text("  •  "),
-            Text(lastReply == null ? "" : lastReply,
-                style: TextStyle(fontSize: 12.0))
+            Text("  •  最后回复来自", style: ItemTextHintStyle()),
+            Text(lastReply == null ? "" : lastReply, style: ItemTextBoldStyle())
           ]);
   }
 }
@@ -151,7 +153,9 @@ class ItemTitleWidget extends StatelessWidget {
     return Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          Expanded(child: Text(title, style: TextStyle(fontSize: 15.0))),
+          Expanded(
+              child: Text(title,
+                  style: ItemTextTitleStyle())),
           RepliesTextWidget(replies: replies)
         ]);
   }
@@ -171,8 +175,8 @@ class ItemNameWidget extends StatelessWidget {
     return Row(
       children: <Widget>[
         NodeTitleTextWidget(nodeTitle: nodeName),
-        Text("  •  "),
-        Text(userName)
+        ItemHintPointWidget(),
+        Text(userName, style: ItemTextBoldStyle())
       ],
     );
   }
@@ -205,7 +209,7 @@ class UserInfoHeaderWidget extends StatelessWidget {
         children: <Widget>[
           Text(userName, style: TextStyle(fontSize: 20.0)),
           Container(
-              margin: EdgeInsets.only(top: 10.0),
+              margin: EdgeInsets.only(top: 5.0),
               child: Text(info, style: TextStyle(fontSize: 13.0)))
         ],
       ))

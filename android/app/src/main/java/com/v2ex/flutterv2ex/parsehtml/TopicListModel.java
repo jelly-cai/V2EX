@@ -58,7 +58,7 @@ public class TopicListModel extends ArrayList<TopicModel> {
         node.setTitle(nodeNameElements.text());
         //主题
         Elements topicTitleElements = el.select("a[href^=/t/]");
-        topic.setTitle(topicTitleElements.text());
+        topic.setTitle(ContentUtils.parseTitle(topicTitleElements.text()));
         String[] subArray = topicTitleElements.attr("href").split("#");
         topic.setId(Integer.parseInt(subArray[0].replace("/t/", "")));
         topic.setReplies(Integer.parseInt(subArray[1].replace("reply", "")));

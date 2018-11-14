@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_v2ex/common/style/item_text_style.dart';
+import 'package:flutter_v2ex/common/view/item_hint_point_widget.dart';
 import 'package:flutter_v2ex/util/time_utils.dart';
 import 'package:flutter_v2ex/bean/latest_bean.dart';
-import 'package:flutter_v2ex/view/node_title_text_widget.dart';
-import 'package:flutter_v2ex/view/replies_text_widget.dart';
-import 'package:flutter_v2ex/view/round_rect_icon_widget.dart';
+import 'package:flutter_v2ex/common/view/node_title_text_widget.dart';
+import 'package:flutter_v2ex/common/view/replies_text_widget.dart';
+import 'package:flutter_v2ex/common/view/round_rect_icon_widget.dart';
 import 'package:flutter_v2ex/view/user_info_widget.dart';
 
 ///首页列表Item
@@ -40,14 +42,16 @@ class TabListItemWidget extends StatelessWidget {
               Text(
                 latest.title,
                 textAlign: TextAlign.left,
-                style: TextStyle(fontSize: 15.0),
+                style: ItemTextTitleStyle(),
               ),
               Container(
                 margin: EdgeInsets.only(top: 5.0),
                 child: Row(
                   children: <Widget>[
                     NodeTitleTextWidget(nodeTitle: latest.node.title),
+                    ItemHintPointWidget(),
                     UserNameTextWidget(userName: latest.member.userName),
+                    ItemHintPointWidget(),
                     DiffTimeTextWidget(
                         lastModified: latest.lastModified * 1000,
                         lastModifiedString: latest.lastModifiedString)
@@ -72,14 +76,9 @@ class UserNameTextWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return Container(
-      margin: EdgeInsets.only(left: 10.0),
-      child: Text(
-        userName,
-        style: TextStyle(
-          color: Color.fromARGB(255, 119, 128, 135),
-        ),
-      ),
+    return Text(
+      userName,
+      style: ItemTextBoldStyle(),
     );
   }
 }
@@ -96,17 +95,11 @@ class DiffTimeTextWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return Container(
-      margin: EdgeInsets.only(left: 10.0),
-      child: Text(
-        lastModifiedString == null
-            ? getDiffTime(lastModified)
-            : lastModifiedString,
-        style: TextStyle(
-          fontSize: 12.0,
-          color: Color.fromARGB(255, 204, 204, 204),
-        ),
-      ),
+    return Text(
+      lastModifiedString == null
+          ? getDiffTime(lastModified)
+          : lastModifiedString,
+      style: ItemTextHintStyle(),
     );
   }
 }

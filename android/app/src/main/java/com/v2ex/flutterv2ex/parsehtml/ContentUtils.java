@@ -71,6 +71,11 @@ public class ContentUtils {
         return created;
     }
 
+    /**
+     * 解析node的名字
+     * @param title
+     * @return
+     */
     public static String parseNodeTitle(String title){
         String[] strings = title.split("  ");
         if(strings.length > 1){
