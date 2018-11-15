@@ -1,8 +1,3 @@
-# flutter_v2ex
+# V2EX客户端-Flutter版
 
-A new Flutter application.
-
-## Getting Started
-
-For help getting started with Flutter, view our online
-[documentation](https://flutter.io/).
+一个练手的flutter项目，之后会一直维护
