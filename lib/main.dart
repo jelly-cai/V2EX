@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_v2ex/view/item_content_widget.dart';
 import 'package:flutter_v2ex/bean/tab_bean.dart';
+import 'package:flutter_v2ex/view/replies_list_widget.dart';
 import 'package:flutter_v2ex/view/tab_list_widget.dart';
 
 void main() => runApp(MyApp());
@@ -14,7 +15,10 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.blue,
         ),
         home: StartPage(),
-        routes: {"/item_content": (context) => ItemContentWidget()});
+        routes: {
+          "/item_content": (context) => ItemContentWidget(),
+          "/relpies_list": (context) => RepliesListWidget()
+        });
   }
 }
 

@@ -6,6 +6,8 @@ import 'package:flutter_v2ex/util/time_utils.dart';
 import 'package:flutter_v2ex/bean/latest_bean.dart';
 import 'package:flutter_v2ex/bean/topic_content_bean.dart';
 import 'package:flutter_v2ex/common/view/circle_icon_widget.dart';
+import 'package:flutter_v2ex/view/replies_list_widget.dart';
+import 'package:flutter_v2ex/view/reply_item_widget.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -46,6 +48,7 @@ class ItemContentWidgetState extends State {
           ? Center(child: CircularProgressIndicator())
           : ListView.builder(
               itemBuilder: (context, position) {
+                ///返回头部
                 if (position == 0) {
                   return Container(
                     padding: EdgeInsets.all(10.0),
@@ -86,26 +89,38 @@ class ItemContentWidgetState extends State {
                               fontWeight: FontWeight.normal,
                               fontStyle: FontStyle.normal,
                               decoration: TextDecoration.none),
-                        ),
-                        Divider()
+                        )
                       ],
                     ),
                   );
                 }
 
-                ///查看更多
-                if (topicContent.totalPage > 1 &&
-                    position == getListLength() - 1) {
-                  return Padding(
-                      padding: EdgeInsets.all(5.0),
-                      child: Center(child: Text("查看更多")));
+                ///如果是奇数加入分隔线
+                if(position.isOdd){
+                  return Divider(height: 3.0);
                 }
 
-                ///回复对象
-                Reply reply = topicContent.replies[position - 1];
+                ///查看更多
+                if (isOnMore(position)) {
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.of(context)
+                          .push(MaterialPageRoute(builder: (context) {
+                        return RepliesListWidget(topicContent: topicContent);
+                      }));
+                    },
+                    child: Padding(
+                        padding: EdgeInsets.all(5.0),
+                        child: Center(child: Text("查看更多"))),
+                  );
+                }
+                ///向下取整,减去头部
+                int realPosition = position ~/ 2 - 1;
+                ///回复item
+                Reply reply = topicContent.replies[realPosition];
                 return Container(
-                  padding: EdgeInsets.only(left: 5.0, right: 5.0),
-                  child: ReplyItemWidget(reply: reply, position: position),
+                  padding: EdgeInsets.all(5.0),
+                  child: ReplyItemWidget(reply: reply, position: realPosition + 1),
                 );
               },
               itemCount: getListLength(),
@@ -113,13 +128,18 @@ class ItemContentWidgetState extends State {
     );
   }
 
-  ///获取ListView的长度
+  ///是否有查看更多的按钮
+  isOnMore(position) {
+    return topicContent.totalPage > 1 && position == getListLength() - 1;
+  }
+
+  ///获取ListView的长度,加一个头部，分隔线和是否有查看更多的按钮，如果总页大于1就有
   getListLength() {
-    return (topicContent.replies.length + 1) +
+    return (topicContent.replies.length + 1) * 2 +
         (topicContent.totalPage > 1 ? 1 : 0);
   }
 
-  ///获取List数据
+  ///获取评论列表数据
   getData() async {
     http.Response response =
         await http.get("https://www.v2ex.com/t/${latest.id}?p=1");
@@ -129,90 +149,6 @@ class ItemContentWidgetState extends State {
     setState(() {
       topicContent = TopicContent.fromJson(json.decode(jsonString));
     });
-  }
-}
-
-///回复列表item
-class ReplyItemWidget extends StatelessWidget {
-  final Reply reply;
-  final int position;
-
-  const ReplyItemWidget({Key key, this.reply, this.position}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    // TODO: implement build
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Container(
-            margin: EdgeInsets.only(right: 5.0),
-            child: CircleIconWidget(
-                iconUrl: "https:${reply.member.avatarNormal}",
-                width: 35.0,
-                height: 35.0)),
-        Expanded(
-            child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            ReplyUserInfoWidget(
-                userName: reply.member.userName,
-                created: reply.created * 1000,
-                createdString: reply.createdString,
-                position: position),
-            Container(
-                margin: EdgeInsets.only(top: 3.0),
-                child: SimpleHtmlText(
-                  data: "<span>${reply.contentRendered}</span>",
-                  defaultStyle: TextStyle(
-                      fontSize: 14.0,
-                      color: Colors.black,
-                      decoration: TextDecoration.none),
-                )),
-            Divider()
-          ],
-        ))
-      ],
-    );
-  }
-}
-
-///回复列表的用户信息
-class ReplyUserInfoWidget extends StatelessWidget {
-  final String userName;
-  final int created;
-  final int position;
-  final String createdString;
-
-  const ReplyUserInfoWidget(
-      {Key key, this.userName, this.created, this.position, this.createdString})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    // TODO: implement build
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        Row(
-          children: <Widget>[
-            Text(userName,
-                style: TextStyle(fontSize: 12.0, color: Colors.black)),
-            Container(
-              margin: EdgeInsets.only(left: 5.0),
-              child: Text(
-                createdString == null ? getDiffTime(created) : createdString,
-                style: TextStyle(
-                  fontSize: 10.0,
-                  color: Color.fromARGB(255, 153, 153, 153),
-                ),
-              ),
-            )
-          ],
-        ),
-        Text("第$position楼", style: TextStyle(fontSize: 10.0))
-      ],
-    );
   }
 }
 
