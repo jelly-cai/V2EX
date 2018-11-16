@@ -2,8 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_v2ex/data/parse_data.dart';
 import 'package:flutter_v2ex/view/item_content_widget.dart';
-import 'package:flutter_v2ex/bean/latest_bean.dart';
+import 'package:flutter_v2ex/bean/topic_bean.dart';
 import 'package:flutter_v2ex/bean/tab_bean.dart';
 import 'package:flutter_v2ex/view/tab_list_item_widget.dart';
 import 'package:http/http.dart' as http;
@@ -23,7 +24,7 @@ class TabListWidget extends StatefulWidget {
 
 class TabListWidgetState extends State with AutomaticKeepAliveClientMixin{
   final TabBean tabBean;
-  List<Latest> latestList;
+  List<Topic> topics;
 
   TabListWidgetState(this.tabBean);
 
@@ -44,17 +45,17 @@ class TabListWidgetState extends State with AutomaticKeepAliveClientMixin{
             padding: EdgeInsets.all(5.0),
             child: Column(
               children: <Widget>[
-                TabListItemWidget(latest: latestList[position]),
+                TabListItemWidget(latest: topics[position]),
                 Divider()
               ],
             ),
           ),onTap: (){
             Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-              return ItemContentWidget(latest: latestList[position]);
+              return ItemContentWidget(latest: topics[position]);
             }));
           },);
         },
-        itemCount: latestList == null ? 0 : latestList.length,
+        itemCount: topics == null ? 0 : topics.length,
       ),
       onRefresh: _handleRefresh,
     );
@@ -74,17 +75,23 @@ class TabListWidgetState extends State with AutomaticKeepAliveClientMixin{
 
   ///解析json，刷新界面
   parseJson(jsonString) {
+    List list = json.decode(jsonString);
+    List<Topic> topics = list.map((dynamic) => Topic.formJson(dynamic)).toList();
+    updateTopics(topics);
+  }
+
+  ///更新界面
+  updateTopics(topics){
     setState(() {
-      List list = json.decode(jsonString);
-      latestList = list.map((dynamic) => Latest.formJson(dynamic)).toList();
+      this.topics = topics;
     });
   }
 
   ///解析html
-  parseHtml(htmlString) async {
-    const platform = const MethodChannel("com.v2ex/android");
-    String jsonString = await platform.invokeMethod("parseTopicHtml", {"response": htmlString});
-    parseJson(jsonString);
+  parseHtml(htmlString) {
+    parseTopics(htmlString).then((topics){
+      updateTopics(topics);
+    });
   }
 
   ///处理刷新

@@ -1,7 +1,7 @@
 import 'package:flutter_v2ex/bean/member_bean.dart';
 import 'package:flutter_v2ex/bean/node_bean.dart';
 
-class Latest {
+class Topic {
   String lastReply;
   int lastTouched;
   String title;
@@ -14,10 +14,10 @@ class Latest {
   String lastModifiedString;
   int replies;
   int id;
-  Node node;
+  NodeBean node;
   Member member;
 
-  Latest(
+  Topic(
       {this.lastReply,
       this.lastTouched,
       this.title,
@@ -33,8 +33,8 @@ class Latest {
       this.node,
       this.member});
 
-  factory Latest.formJson(Map<String, dynamic> json) {
-    return Latest(
+  factory Topic.formJson(Map<String, dynamic> json) {
+    return Topic(
         lastReply: json['lastReply'],
         lastTouched: json['last_touched'],
         title: json['title'],
@@ -47,7 +47,7 @@ class Latest {
         lastModifiedString: json["last_modified_string"],
         replies: json['replies'],
         id: json['id'],
-        node: Node.fromJson(json['node']),
+        node: NodeBean.fromJson(json['node']),
         member: Member.fromJson(json['member']));
   }
 }

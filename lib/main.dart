@@ -61,24 +61,16 @@ class MyHomePage extends StatelessWidget {
     // TODO: implement build
     return DefaultTabController(
         child: Scaffold(
-            body: NestedScrollView(
-                headerSliverBuilder: (context, isScrolled) {
-                  return [
-                    SliverAppBar(
-                        title: Text(title),
-                        floating: true,
-                        pinned: true,
-                        bottom: TabBar(
-                          tabs:
-                              _tabs.map((tab) => Tab(text: tab.title)).toList(),
-                          isScrollable: true,
-                        ))
-                  ];
-                },
-                body: TabBarView(
-                  children:
-                      _tabs.map((tab) => TabListWidget(tabBean: tab)).toList(),
-                ))),
+            appBar: AppBar(
+                title: Text(title),
+                bottom: TabBar(
+                  tabs: _tabs.map((tab) => Tab(text: tab.title)).toList(),
+                  isScrollable: true,
+                )),
+            body: TabBarView(
+              children:
+                  _tabs.map((tab) => TabListWidget(tabBean: tab)).toList(),
+            )),
         length: _tabs.length);
   }
 }

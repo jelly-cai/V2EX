@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_v2ex/common/style/item_text_style.dart';
 import 'package:flutter_v2ex/common/view/item_hint_point_widget.dart';
 import 'package:flutter_v2ex/util/time_utils.dart';
-import 'package:flutter_v2ex/bean/latest_bean.dart';
+import 'package:flutter_v2ex/bean/topic_bean.dart';
 import 'package:flutter_v2ex/common/view/node_title_text_widget.dart';
 import 'package:flutter_v2ex/common/view/replies_text_widget.dart';
 import 'package:flutter_v2ex/common/view/round_rect_icon_widget.dart';
@@ -10,7 +10,7 @@ import 'package:flutter_v2ex/view/user_info_widget.dart';
 
 ///首页列表Item
 class TabListItemWidget extends StatelessWidget {
-  final Latest latest;
+  final Topic latest;
 
   const TabListItemWidget({Key key, this.latest}) : super(key: key);
 
@@ -51,9 +51,12 @@ class TabListItemWidget extends StatelessWidget {
                     NodeTitleTextWidget(nodeTitle: latest.node.title),
                     ItemHintPointWidget(),
                     UserNameTextWidget(userName: latest.member.userName),
-                    ItemHintPointWidget(),
+                    latest.lastModified == null &&
+                            latest.lastModifiedString == null
+                        ? Container()
+                        : ItemHintPointWidget(),
                     DiffTimeTextWidget(
-                        lastModified: latest.lastModified * 1000,
+                        lastModified: latest.lastModified,
                         lastModifiedString: latest.lastModifiedString)
                   ],
                 ),
@@ -97,7 +100,7 @@ class DiffTimeTextWidget extends StatelessWidget {
     // TODO: implement build
     return Text(
       lastModifiedString == null
-          ? getDiffTime(lastModified)
+          ? lastModified == null ? "" : getDiffTime(lastModified)
           : lastModifiedString,
       style: ItemTextHintStyle(),
     );

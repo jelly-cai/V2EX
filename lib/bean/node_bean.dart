@@ -1,4 +1,4 @@
-class Node {
+class NodeBean {
   String avatarLarge;
   String name;
   String avatarNormal;
@@ -14,7 +14,7 @@ class Node {
   int id;
   String parentNodeName;
 
-  Node(
+  NodeBean(
       {this.avatarLarge,
       this.name,
       this.avatarNormal,
@@ -30,8 +30,8 @@ class Node {
       this.id,
       this.parentNodeName});
 
-  factory Node.fromJson(Map<String, dynamic> json) {
-    return Node(
+  factory NodeBean.fromJson(Map<String, dynamic> json) {
+    return NodeBean(
         avatarLarge: json['avatar_large'],
         name: json['name'],
         avatarNormal: json['avatar_normal'],

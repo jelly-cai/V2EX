@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_v2ex/bean/latest_bean.dart';
+import 'package:flutter_v2ex/bean/topic_bean.dart';
 import 'package:flutter_v2ex/bean/user_info_bean.dart';
 import 'package:flutter_v2ex/bean/member_bean.dart';
 import 'package:flutter_v2ex/common/style/item_text_style.dart';
@@ -62,7 +62,7 @@ class UserInfoWidgetState extends State {
                     return Divider(height: 2.0);
                   }
 
-                  Latest topic = userInfo.topics[position - 2];
+                  Topic topic = userInfo.topics[position - 2];
 
                   return GestureDetector(
                       onTap: () {

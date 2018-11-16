@@ -1,11 +1,11 @@
-import 'package:flutter_v2ex/bean/latest_bean.dart';
+import 'package:flutter_v2ex/bean/topic_bean.dart';
 import 'package:flutter_v2ex/bean/reply_bean.dart';
 
 class TopicContent {
   int currentPage;
   int totalPage;
   List<Reply> replies;
-  Latest latest;
+  Topic latest;
 
   TopicContent({this.currentPage, this.totalPage, this.replies, this.latest});
 
@@ -18,6 +18,6 @@ class TopicContent {
         currentPage: jsonMap['currentPage'],
         totalPage: jsonMap['totalPage'],
         replies: replies,
-        latest: Latest.formJson(jsonMap['topic']));
+        latest: Topic.formJson(jsonMap['topic']));
   }
 }

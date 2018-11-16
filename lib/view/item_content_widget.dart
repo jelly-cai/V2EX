@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_v2ex/bean/reply_bean.dart';
+import 'package:flutter_v2ex/data/parse_data.dart';
 import 'package:flutter_v2ex/html/simple_html_text_widget.dart';
 import 'package:flutter_v2ex/util/time_utils.dart';
-import 'package:flutter_v2ex/bean/latest_bean.dart';
+import 'package:flutter_v2ex/bean/topic_bean.dart';
 import 'package:flutter_v2ex/bean/topic_content_bean.dart';
 import 'package:flutter_v2ex/common/view/circle_icon_widget.dart';
 import 'package:flutter_v2ex/view/replies_list_widget.dart';
@@ -13,7 +14,7 @@ import 'dart:convert';
 
 ///主题内容
 class ItemContentWidget extends StatefulWidget {
-  final Latest latest;
+  final Topic latest;
 
   const ItemContentWidget({Key key, this.latest}) : super(key: key);
 
@@ -25,7 +26,7 @@ class ItemContentWidget extends StatefulWidget {
 }
 
 class ItemContentWidgetState extends State {
-  final Latest latest;
+  final Topic latest;
   TopicContent topicContent;
 
   ItemContentWidgetState(this.latest);
@@ -144,6 +145,7 @@ class ItemContentWidgetState extends State {
     http.Response response =
         await http.get("https://www.v2ex.com/t/${latest.id}?p=1");
     const platform = const MethodChannel("com.v2ex/android");
+    parseTopicContent(response.body);
     String jsonString = await platform.invokeMethod(
         "parseReplyHtml", {"response": response.body, "id": latest.id});
     setState(() {
