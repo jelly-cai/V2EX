@@ -45,7 +45,7 @@ class TabListWidgetState extends State with AutomaticKeepAliveClientMixin{
             padding: EdgeInsets.all(5.0),
             child: Column(
               children: <Widget>[
-                TabListItemWidget(latest: topics[position]),
+                TabListItemWidget(topic: topics[position]),
                 Divider()
               ],
             ),
@@ -89,7 +89,7 @@ class TabListWidgetState extends State with AutomaticKeepAliveClientMixin{
 
   ///解析html
   parseHtml(htmlString) {
-    parseTopics(htmlString).then((topics){
+    parseTopics(htmlString: htmlString).then((topics){
       updateTopics(topics);
     });
   }

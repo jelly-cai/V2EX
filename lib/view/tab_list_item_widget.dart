@@ -10,9 +10,9 @@ import 'package:flutter_v2ex/view/user_info_widget.dart';
 
 ///首页列表Item
 class TabListItemWidget extends StatelessWidget {
-  final Topic latest;
+  final Topic topic;
 
-  const TabListItemWidget({Key key, this.latest}) : super(key: key);
+  const TabListItemWidget({Key key, this.topic}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -25,13 +25,13 @@ class TabListItemWidget extends StatelessWidget {
             child: Container(
                 margin: EdgeInsets.only(right: 5.0),
                 child: RoundRectIconWidget(
-                    iconUrl: "http:${latest.member.avatarNormal}",
+                    iconUrl: "http:${topic.member.avatarNormal}",
                     width: 50.0,
                     height: 50.0,
                     radius: 5.0)),
             onTap: () {
               Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-                return UserInfoWidget(member: latest.member);
+                return UserInfoWidget(member: topic.member);
               }));
             }),
         Expanded(
@@ -40,7 +40,7 @@ class TabListItemWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               Text(
-                latest.title,
+                topic.title,
                 textAlign: TextAlign.left,
                 style: ItemTextTitleStyle(),
               ),
@@ -48,23 +48,23 @@ class TabListItemWidget extends StatelessWidget {
                 margin: EdgeInsets.only(top: 5.0),
                 child: Row(
                   children: <Widget>[
-                    NodeTitleTextWidget(nodeTitle: latest.node.title),
+                    NodeTitleTextWidget(nodeTitle: topic.node.title),
                     ItemHintPointWidget(),
-                    UserNameTextWidget(userName: latest.member.userName),
-                    latest.lastModified == null &&
-                            latest.lastModifiedString == null
+                    UserNameTextWidget(userName: topic.member.userName),
+                    topic.lastModified == null &&
+                            topic.lastModifiedString == null
                         ? Container()
                         : ItemHintPointWidget(),
                     DiffTimeTextWidget(
-                        lastModified: latest.lastModified,
-                        lastModifiedString: latest.lastModifiedString)
+                        lastModified: topic.lastModified,
+                        lastModifiedString: topic.lastModifiedString)
                   ],
                 ),
               )
             ],
           ),
         ),
-        RepliesTextWidget(replies: latest.replies)
+        RepliesTextWidget(replies: topic.replies)
       ],
     );
   }
@@ -100,7 +100,7 @@ class DiffTimeTextWidget extends StatelessWidget {
     // TODO: implement build
     return Text(
       lastModifiedString == null
-          ? lastModified == null ? "" : getDiffTime(lastModified)
+          ? lastModified == null ? "" : getDiffTime(lastModified * 1000)
           : lastModifiedString,
       style: ItemTextHintStyle(),
     );

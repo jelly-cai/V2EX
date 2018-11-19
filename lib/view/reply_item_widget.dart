@@ -29,7 +29,7 @@ class ReplyItemWidget extends StatelessWidget {
               children: <Widget>[
                 ReplyUserInfoWidget(
                     userName: reply.member.userName,
-                    created: reply.created * 1000,
+                    created: reply.created,
                     createdString: reply.createdString,
                     position: position),
                 Container(
@@ -72,7 +72,7 @@ class ReplyUserInfoWidget extends StatelessWidget {
             Container(
               margin: EdgeInsets.only(left: 5.0),
               child: Text(
-                createdString == null ? getDiffTime(created) : createdString,
+                createdString == null ? getDiffTime(created * 1000) : createdString,
                 style: TextStyle(
                   fontSize: 10.0,
                   color: Color.fromARGB(255, 153, 153, 153),

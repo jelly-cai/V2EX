@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_v2ex/bean/reply_bean.dart';
 import 'package:flutter_v2ex/bean/topic_content_bean.dart';
+import 'package:flutter_v2ex/data/parse_data.dart';
 import 'package:flutter_v2ex/view/reply_item_widget.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -103,19 +104,15 @@ class RepliesListState extends State {
   ///获取评论列表数据
   getData() async {
     http.Response response = await http
-        .get("https://www.v2ex.com/t/${topicContent.latest.id}?p=$currPage");
-    const platform = const MethodChannel("com.v2ex/android");
-    String jsonString = await platform.invokeMethod("parseReplyHtml",
-        {"response": response.body, "id": topicContent.latest.id});
+        .get("https://www.v2ex.com/t/${this.topicContent.topic.id}?p=$currPage");
+    TopicContent topicContent = await parseTopicContentAndReplies(response.body);
     setState(() {
-      TopicContent temp = TopicContent.fromJson(json.decode(jsonString));
-
       ///如果返回的页码大于当前显示的页码不同，就是加载下一页数据
-      if (temp.currentPage > topicContent.currentPage) {
-        topicContent.currentPage = currPage;
-        topicContent.replies.addAll(temp.replies);
-      } else if (temp.currentPage == 1) {
-        topicContent = temp;
+      if (topicContent.currentPage > this.topicContent.currentPage) {
+        this.topicContent.currentPage = currPage;
+        this.topicContent.replies.addAll(topicContent.replies);
+      } else if (topicContent.currentPage == 1) {
+        this.topicContent = topicContent;
       } else {
         isNoData = true;
       }

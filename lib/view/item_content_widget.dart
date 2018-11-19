@@ -62,28 +62,28 @@ class ItemContentWidgetState extends State {
                           children: <Widget>[
                             IconInfoWidget(
                               iconUrl:
-                                  "http:${topicContent.latest.member.avatarNormal}",
-                              userName: topicContent.latest.member.userName,
-                              replies: topicContent.latest.replies,
-                              created: topicContent.latest.created * 1000,
-                              createdString: topicContent.latest.createdString,
+                                  "http:${topicContent.topic.member.avatarNormal}",
+                              userName: topicContent.topic.member.userName,
+                              replies: topicContent.topic.replies,
+                              created: topicContent.topic.created,
+                              createdString: topicContent.topic.createdString,
                             ),
                             Padding(
                                 padding: EdgeInsets.only(top: 3.0),
-                                child: Text(topicContent.latest.node.title))
+                                child: Text(topicContent.topic.node.title))
                           ],
                         ),
                         Padding(
                           padding: EdgeInsets.only(top: 10.0),
                           child: Text(
-                            topicContent.latest.title,
+                            topicContent.topic.title,
                             style:
                                 TextStyle(fontSize: 17.0, color: Colors.black),
                           ),
                         ),
                         Divider(),
                         SimpleHtmlText(
-                          data: topicContent.latest.contentRendered,
+                          data: topicContent.topic.contentRendered,
                           defaultStyle: TextStyle(
                               fontSize: 14.0,
                               color: Colors.black54,
@@ -144,12 +144,9 @@ class ItemContentWidgetState extends State {
   getData() async {
     http.Response response =
         await http.get("https://www.v2ex.com/t/${latest.id}?p=1");
-    const platform = const MethodChannel("com.v2ex/android");
-    parseTopicContent(response.body);
-    String jsonString = await platform.invokeMethod(
-        "parseReplyHtml", {"response": response.body, "id": latest.id});
+    TopicContent topicContent = await parseTopicContentAndReplies(response.body);
     setState(() {
-      topicContent = TopicContent.fromJson(json.decode(jsonString));
+      this.topicContent = topicContent;
     });
   }
 }

@@ -5,6 +5,7 @@ import 'package:flutter_v2ex/bean/user_info_bean.dart';
 import 'package:flutter_v2ex/bean/member_bean.dart';
 import 'package:flutter_v2ex/common/style/item_text_style.dart';
 import 'package:flutter_v2ex/common/view/item_hint_point_widget.dart';
+import 'package:flutter_v2ex/data/parse_data.dart';
 import 'package:flutter_v2ex/view/item_content_widget.dart';
 import 'package:flutter_v2ex/common/view/node_title_text_widget.dart';
 import 'package:flutter_v2ex/common/view/replies_text_widget.dart';
@@ -77,7 +78,7 @@ class UserInfoWidgetState extends State {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 ItemNameWidget(
-                                  nodeName: topic.node.name,
+                                  nodeName: topic.node.title,
                                   userName: topic.member.userName,
                                 ),
                                 Container(
@@ -106,12 +107,9 @@ class UserInfoWidgetState extends State {
   getData() async {
     http.Response response =
         await http.get("https://www.v2ex.com/member/" + userName);
-    const platform = const MethodChannel("com.v2ex/android");
-    String jsonString = await platform
-        .invokeMethod("parseUserInfoHtml", {"response": response.body});
-    print(jsonString);
+    UserInfo userInfo = await parseUserInfo(response.body);
     setState(() {
-      userInfo = UserInfo.fromJson(json.decode(jsonString));
+      this.userInfo = userInfo;
     });
   }
 }

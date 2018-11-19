@@ -5,9 +5,9 @@ class TopicContent {
   int currentPage;
   int totalPage;
   List<Reply> replies;
-  Topic latest;
+  Topic topic;
 
-  TopicContent({this.currentPage, this.totalPage, this.replies, this.latest});
+  TopicContent({this.currentPage, this.totalPage, this.replies, this.topic});
 
   factory TopicContent.fromJson(Map<String, dynamic> jsonMap) {
     List list = jsonMap['replies'] as List;
@@ -18,6 +18,6 @@ class TopicContent {
         currentPage: jsonMap['currentPage'],
         totalPage: jsonMap['totalPage'],
         replies: replies,
-        latest: Topic.formJson(jsonMap['topic']));
+        topic: Topic.formJson(jsonMap['topic']));
   }
 }
