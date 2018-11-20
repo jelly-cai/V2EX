@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter_v2ex/bean/member_bean.dart';
 import 'package:flutter_v2ex/bean/node_bean.dart';
+import 'package:flutter_v2ex/bean/node_list_bean.dart';
 import 'package:flutter_v2ex/bean/reply_bean.dart';
 import 'package:flutter_v2ex/bean/topic_bean.dart';
 import 'package:flutter_v2ex/bean/topic_content_bean.dart';
@@ -8,6 +9,81 @@ import 'package:flutter_v2ex/bean/user_info_bean.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart';
 
+///解析node中的主题列表
+parseNodeList(String htmlString) async{
+  Document document = parse(htmlString);
+  Element body = document.body;
+  NodeListBean nodeList = NodeListBean();
+  //node
+  NodeBean node = NodeBean();
+  Element nodeHeaderElement = body.querySelector(".node_header");
+  if(nodeHeaderElement != null){
+    //头像
+    Element imgElement = nodeHeaderElement.querySelector("img");
+    if(imgElement != null){
+      node.avatarNormal = imgElement.attributes['src'];
+    }
+    //主题总数
+    Element topicsElement = nodeHeaderElement.querySelector("div.fr.f12");
+    if(topicsElement != null){
+      node.topics = int.parse(topicsElement.text.replaceAll("主题总数", ""));
+    }
+    //node信息
+    Element infoElement = nodeHeaderElement.querySelector("span.f12");
+    if(infoElement != null){
+      node.info = infoElement.text;
+    }
+  }
+  nodeList.node = node;
+  //页码
+  Element inputElement = body.querySelector(".page_input");
+  if(inputElement != null){
+    nodeList.currPage = int.parse(inputElement.attributes["value"]);
+    nodeList.totalPage = int.parse(inputElement.attributes["max"]);
+  }
+  List<Element> tableElements = body.querySelectorAll("div.cell table");
+  tableElements = tableElements.sublist(2,tableElements.length - 2);
+  List<Topic> topics = tableElements.map((element){
+    Topic topic = Topic();
+    Member member = Member();
+    //头像
+    Element avatarElement = element.querySelector(".avatar");
+    if(avatarElement != null){
+      member.avatarNormal = avatarElement.attributes["src"];
+    }
+    //标题
+    Element itemTitleElement = element.querySelector(".item_title");
+    if(itemTitleElement != null){
+      topic.title = itemTitleElement.text;
+    }
+    Element smallFadeElement = element.querySelector(".small.fade");
+    if(smallFadeElement != null){
+      List<String> infoStrings = smallFadeElement.text.split("  •  ");
+      //发帖用户名
+      if(infoStrings.length > 0){
+        member.userName = infoStrings[0];
+      }
+      //最后修改时间
+      if(infoStrings.length > 1){
+        topic.lastModifiedString = infoStrings[1];
+      }
+      //最后回复人
+      if(infoStrings.length > 2){
+        topic.lastReply = infoStrings[2].replaceAll("最后回复来自 ", "");
+      }
+    }
+    Element repliesElement = element.querySelector(".count_livid");
+    if(repliesElement != null){
+      topic.replies = int.parse(repliesElement.text);
+    }
+    topic.member = member;
+    return topic;
+  }).toList();
+  nodeList.topics = topics;
+  return nodeList;
+}
+
+///解析用户信息
 Future<UserInfo> parseUserInfo(String htmlString) async{
   Document document = parse(htmlString);
   Element body = document.body;
@@ -30,6 +106,7 @@ Future<UserInfo> parseUserInfo(String htmlString) async{
     member.info = infoElement.text;
   }
   userInfo.member = member;
+  //回复列表
   List<Element> cellItemElement = body.querySelectorAll(".cell.item");
   List<Topic> topics = cellItemElement.map((element){
     Topic topic = Topic();

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_v2ex/bean/reply_bean.dart';
 import 'package:flutter_v2ex/data/parse_data.dart';
 import 'package:flutter_v2ex/html/simple_html_text_widget.dart';
@@ -10,7 +9,6 @@ import 'package:flutter_v2ex/common/view/circle_icon_widget.dart';
 import 'package:flutter_v2ex/view/replies_list_widget.dart';
 import 'package:flutter_v2ex/view/reply_item_widget.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
 
 ///主题内容
 class ItemContentWidget extends StatefulWidget {

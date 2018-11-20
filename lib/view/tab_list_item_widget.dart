@@ -6,6 +6,7 @@ import 'package:flutter_v2ex/bean/topic_bean.dart';
 import 'package:flutter_v2ex/common/view/node_title_text_widget.dart';
 import 'package:flutter_v2ex/common/view/replies_text_widget.dart';
 import 'package:flutter_v2ex/common/view/round_rect_icon_widget.dart';
+import 'package:flutter_v2ex/view/node_list_widget.dart';
 import 'package:flutter_v2ex/view/user_info_widget.dart';
 
 ///首页列表Item
@@ -37,23 +38,28 @@ class TabListItemWidget extends StatelessWidget {
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               Text(
                 topic.title,
-                textAlign: TextAlign.left,
                 style: ItemTextTitleStyle(),
               ),
               Container(
                 margin: EdgeInsets.only(top: 5.0),
                 child: Row(
                   children: <Widget>[
-                    NodeTitleTextWidget(nodeTitle: topic.node.title),
+                    GestureDetector(
+                        child: NodeTitleTextWidget(nodeTitle: topic.node.title),
+                        onTap: () {
+                          Navigator.of(context)
+                              .push(MaterialPageRoute(builder: (context) {
+                            return NodeListWidget(node: topic.node);
+                          }));
+                        }),
                     ItemHintPointWidget(),
                     UserNameTextWidget(userName: topic.member.userName),
                     topic.lastModified == null &&
                             topic.lastModifiedString == null
-                        ? Container()
+                        ? Container(child: Text(""))
                         : ItemHintPointWidget(),
                     DiffTimeTextWidget(
                         lastModified: topic.lastModified,

@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_v2ex/bean/reply_bean.dart';
 import 'package:flutter_v2ex/bean/topic_content_bean.dart';
 import 'package:flutter_v2ex/data/parse_data.dart';
 import 'package:flutter_v2ex/view/reply_item_widget.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
 
 ///完整的回复列表
 class RepliesListWidget extends StatefulWidget {
@@ -87,7 +85,7 @@ class RepliesListState extends State {
 
   ///处理刷新
   Future<Null> _handleRefresh() async {
-    currPage = 1;
+    topicContent.currentPage = currPage = 1;
     isNoData = false;
     getData();
   }

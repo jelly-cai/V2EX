@@ -50,7 +50,6 @@ class MyHomePage extends StatelessWidget {
     TabBean("好玩", "https://www.v2ex.com/?tab=play", TabBean.HTML),
     TabBean("APPLE", "https://www.v2ex.com/?tab=apple", TabBean.HTML),
     TabBean("酷工作", "https://www.v2ex.com/?tab=jobs", TabBean.HTML),
-    TabBean("交易", "https://www.v2ex.com/?tab=deals", TabBean.HTML),
     TabBean("城市", "https://www.v2ex.com/?tab=city", TabBean.HTML),
     TabBean("问与答", "https://www.v2ex.com/?tab=qna", TabBean.HTML),
     TabBean("R2", "https://www.v2ex.com/?tab=r2", TabBean.HTML)

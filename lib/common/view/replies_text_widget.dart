@@ -10,7 +10,7 @@ class RepliesTextWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    if (replies <= 0) {
+    if (replies == null || replies <= 0) {
       return Container();
     } else {
       return Container(
