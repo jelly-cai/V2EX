@@ -3,6 +3,7 @@ import 'package:flutter_v2ex/bean/reply_bean.dart';
 import 'package:flutter_v2ex/common/view/circle_icon_widget.dart';
 import 'package:flutter_v2ex/html/html_widget.dart';
 import 'package:flutter_v2ex/util/time_utils.dart';
+import 'package:flutter_v2ex/view/user_info_widget.dart';
 
 ///回复列表item
 class ReplyItemWidget extends StatelessWidget {
@@ -35,7 +36,13 @@ class ReplyItemWidget extends StatelessWidget {
             Container(
                 margin: EdgeInsets.only(top: 3.0),
                 child:
-                    HtmlWidget(data: reply.contentRendered))
+                    HtmlWidget(data: reply.contentRendered,defaultSize: 13.0,aClick: (String url){
+                      if(url.startsWith("/member/")){
+                        Navigator.of(context).push(MaterialPageRoute(builder: (context){
+                          return UserInfoWidget(userName: url.replaceAll("/member/", ""));
+                        }));
+                      }
+                    },))
           ],
         ))
       ],

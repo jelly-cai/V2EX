@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_v2ex/bean/topic_bean.dart';
 import 'package:flutter_v2ex/bean/user_info_bean.dart';
 import 'package:flutter_v2ex/bean/member_bean.dart';
@@ -11,18 +10,18 @@ import 'package:flutter_v2ex/common/view/node_title_text_widget.dart';
 import 'package:flutter_v2ex/common/view/replies_text_widget.dart';
 import 'package:flutter_v2ex/common/view/round_rect_icon_widget.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
 
 ///用户信息展示界面
 class UserInfoWidget extends StatefulWidget {
   final Member member;
+  final String userName;
 
-  const UserInfoWidget({Key key, this.member}) : super(key: key);
+  const UserInfoWidget({Key key, this.member, this.userName}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
-    return UserInfoWidgetState(member.userName);
+    return UserInfoWidgetState(member == null ? userName : member.userName);
   }
 }
 

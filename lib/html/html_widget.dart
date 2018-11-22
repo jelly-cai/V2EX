@@ -1,13 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HtmlWidget extends StatelessWidget {
   final String data;
   final Color defaultColor;
+  final double defaultSize;
+  final FontWeight defaultFontWeight;
+  final FontStyle defaultFontStyle;
+  final Function aClick;
 
-  const HtmlWidget({Key key, this.data, this.defaultColor = Colors.black})
-      : super(key: key);
+  const HtmlWidget({
+    Key key,
+    this.data,
+    this.defaultColor = Colors.black,
+    this.defaultSize = 15.0,
+    this.defaultFontWeight = FontWeight.normal,
+    this.defaultFontStyle = FontStyle.normal,
+    this.aClick,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +28,7 @@ class HtmlWidget extends StatelessWidget {
   }
 
   parseHtml() {
-    if(data == null || data.isEmpty){
+    if (data == null || data.isEmpty) {
       return Container(child: Text(""));
     }
     dom.Document document = parse(data);
@@ -45,7 +57,7 @@ class HtmlWidget extends StatelessWidget {
                   return span;
                 }
               }).toList(),
-              style: TextStyle(),
+              style: getTextStyle(),
             ),
           ),
         );
@@ -61,7 +73,7 @@ class HtmlWidget extends StatelessWidget {
               return span;
             }
           }).toList(),
-          style: TextStyle(color: Colors.black),
+          style: getTextStyle(),
         ),
       ),
     );
@@ -104,7 +116,7 @@ class HtmlWidget extends StatelessWidget {
   }
 
   ///解析有子节点的node
-  parseChildNode(dom.Element node){
+  parseChildNode(dom.Element node) {
     List list = [];
     if (node.localName == "p") {
       list.add(TextSpan(text: "\n"));
@@ -131,32 +143,35 @@ class HtmlWidget extends StatelessWidget {
     } else if (node.localName == "li") {
       list.add(parseLi(node.nodes));
     }
+    return list;
   }
 
   ///解析没有子节点的node
-  parseNoChildNode(dom.Element element) {
+  parseNoChildNode(dom.Element element){
     List list = [];
     if (element.localName == "br") {
-      list.add(TextSpan(text: "\n", style: TextStyle(color: defaultColor)));
+      list.add(TextSpan(text: "\n", style: getTextStyle()));
     } else if (element.localName == "a") {
-      list.add(TextSpan(
-        text: element.text,
+      list.add(GestureDetector(onTap: () async{
+        await openUrl(element.attributes["href"]);
+      },child: Text(
+        element.text,
         style: TextStyle(
           color: Color(int.parse('0xFF1965B5')),
           decoration: TextDecoration.underline,
         ),
-      ));
+      )));
     } else if (element.localName == "img") {
       list.add(Image.network(element.attributes["src"]));
     } else if (element.localName == "em") {
       list.add(TextSpan(
         text: element.text,
-        style: TextStyle(color: defaultColor, fontStyle: FontStyle.italic),
+        style: getTextStyle(fontStyle: FontStyle.italic),
       ));
     } else if (element.localName == "strong") {
       list.add(TextSpan(
         text: element.text,
-        style: TextStyle(color: defaultColor, fontWeight: FontWeight.bold),
+        style: getTextStyle(fontWeight: FontWeight.bold),
       ));
     } else if (element.localName == "h2") {
       list.add(Padding(
@@ -164,8 +179,7 @@ class HtmlWidget extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text(element.text,
-                style: TextStyle(color: defaultColor, fontSize: 18.0)),
+            Text(element.text, style: getTextStyle(fontSize: 18.0)),
             Divider()
           ],
         ),
@@ -176,8 +190,7 @@ class HtmlWidget extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text(element.text,
-                style: TextStyle(color: defaultColor, fontSize: 17.0)),
+            Text(element.text, style: getTextStyle(fontSize: 17.0)),
             Divider()
           ],
         ),
@@ -197,10 +210,33 @@ class HtmlWidget extends StatelessWidget {
       ));
     } else if (element.localName == "p") {
       list.add(TextSpan(text: "\n"));
-      list.add(TextSpan(
-          text: element.text, style: TextStyle(color: defaultColor)));
+      list.add(TextSpan(text: element.text, style: getTextStyle()));
       list.add(TextSpan(text: "\n"));
     }
     return list;
   }
+
+  ///基于参数和默认值获得TextStyle
+  getTextStyle(
+      {Color color,
+      double fontSize,
+      FontWeight fontWeight,
+      FontStyle fontStyle}) {
+    return TextStyle(
+      color: color == null ? defaultColor : color,
+      fontSize: fontSize == null ? defaultSize : fontSize,
+      fontWeight: fontWeight == null ? defaultFontWeight : fontWeight,
+      fontStyle: fontStyle == null ? defaultFontStyle : fontStyle,
+    );
+  }
+
+  ///
+  openUrl(String url) async{
+    if(await canLaunch(url)){
+      await launch(url);
+    }else{
+      aClick(url);
+    }
+  }
+
 }
