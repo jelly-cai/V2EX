@@ -7,6 +7,7 @@ import 'package:flutter_v2ex/common/view/item_hint_point_widget.dart';
 import 'package:flutter_v2ex/common/view/replies_text_widget.dart';
 import 'package:flutter_v2ex/common/view/round_rect_icon_widget.dart';
 import 'package:flutter_v2ex/data/parse_data.dart';
+import 'package:flutter_v2ex/view/item_content_widget.dart';
 import 'package:http/http.dart' as http;
 
 class NodeListWidget extends StatefulWidget {
@@ -82,7 +83,11 @@ class NodeListWidgetState extends State {
                   }
 
                   Topic topic = nodeList.topics[position ~/ 2 - 1];
-                  return ListItemWidget(topic: topic);
+                  return GestureDetector(child: ListItemWidget(topic: topic),onTap: (){
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context){
+                      return ItemContentWidget(topic: topic);
+                    }));
+                  });
                 },
                 itemCount: getListLength(),
                 controller: controller,

@@ -69,7 +69,7 @@ class UserInfoWidgetState extends State {
                       onTap: () {
                         Navigator.of(context)
                             .push(MaterialPageRoute(builder: (context) {
-                          return ItemContentWidget(latest: topic);
+                          return ItemContentWidget(topic: topic);
                         }));
                       },
                       child: Container(

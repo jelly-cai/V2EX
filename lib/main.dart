@@ -43,8 +43,8 @@ class MyHomePage extends StatelessWidget {
 
   final String title;
   final List<TabBean> _tabs = [
-    TabBean("最热", "https://www.v2ex.com/api/topics/hot.json", TabBean.JSON),
-    TabBean("最新", "https://www.v2ex.com/api/topics/latest.json", TabBean.JSON),
+    TabBean("最热", "https://www.v2ex.com/?tab=hot", TabBean.HTML),
+    TabBean("全部", "https://www.v2ex.com/?tab=all", TabBean.HTML),
     TabBean("技术", "https://www.v2ex.com/?tab=tech", TabBean.HTML),
     TabBean("创意", "https://www.v2ex.com/?tab=creative", TabBean.HTML),
     TabBean("好玩", "https://www.v2ex.com/?tab=play", TabBean.HTML),

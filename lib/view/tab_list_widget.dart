@@ -51,7 +51,7 @@ class TabListWidgetState extends State with AutomaticKeepAliveClientMixin{
             ),
           ),onTap: (){
             Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-              return ItemContentWidget(latest: topics[position]);
+              return ItemContentWidget(topic: topics[position]);
             }));
           },);
         },

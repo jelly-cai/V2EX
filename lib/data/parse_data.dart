@@ -10,70 +10,79 @@ import 'package:html/dom.dart';
 import 'package:html/parser.dart';
 
 ///解析node中的主题列表
-parseNodeList(String htmlString) async{
+parseNodeList(String htmlString) async {
   Document document = parse(htmlString);
   Element body = document.body;
   NodeListBean nodeList = NodeListBean();
   //node
   NodeBean node = NodeBean();
   Element nodeHeaderElement = body.querySelector(".node_header");
-  if(nodeHeaderElement != null){
+  if (nodeHeaderElement != null) {
     //头像
     Element imgElement = nodeHeaderElement.querySelector("img");
-    if(imgElement != null){
+    if (imgElement != null) {
       node.avatarNormal = imgElement.attributes['src'];
     }
     //主题总数
     Element topicsElement = nodeHeaderElement.querySelector("div.fr.f12");
-    if(topicsElement != null){
+    if (topicsElement != null) {
       node.topics = int.parse(topicsElement.text.replaceAll("主题总数", ""));
     }
     //node信息
     Element infoElement = nodeHeaderElement.querySelector("span.f12");
-    if(infoElement != null){
+    if (infoElement != null) {
       node.info = infoElement.text;
     }
   }
   nodeList.node = node;
   //页码
   Element inputElement = body.querySelector(".page_input");
-  if(inputElement != null){
+  if (inputElement != null) {
     nodeList.currPage = int.parse(inputElement.attributes["value"]);
     nodeList.totalPage = int.parse(inputElement.attributes["max"]);
   }
   List<Element> tableElements = body.querySelectorAll("div.cell table");
-  tableElements = tableElements.sublist(2,tableElements.length - 2);
-  List<Topic> topics = tableElements.map((element){
+  tableElements = tableElements.sublist(2, tableElements.length - 2);
+  List<Topic> topics = tableElements.map((element) {
     Topic topic = Topic();
     Member member = Member();
     //头像
     Element avatarElement = element.querySelector(".avatar");
-    if(avatarElement != null){
+    if (avatarElement != null) {
       member.avatarNormal = avatarElement.attributes["src"];
     }
-    //标题
     Element itemTitleElement = element.querySelector(".item_title");
-    if(itemTitleElement != null){
+    if (itemTitleElement != null) {
+      //标题
       topic.title = itemTitleElement.text;
+      //id
+      Element idElement = itemTitleElement.querySelector("a");
+      if (idElement != null) {
+        List<String> hrefStrings = idElement.attributes['href'].split("#");
+        if (hrefStrings.length > 0) {
+          topic.id = int.parse(hrefStrings[0].replaceAll("/t/", ""));
+        }
+      }
     }
     Element smallFadeElement = element.querySelector(".small.fade");
-    if(smallFadeElement != null){
+    if (smallFadeElement != null) {
       List<String> infoStrings = smallFadeElement.text.split("  •  ");
       //发帖用户名
-      if(infoStrings.length > 0){
+      if (infoStrings.length > 0) {
         member.userName = infoStrings[0];
       }
       //最后修改时间
-      if(infoStrings.length > 1){
+      if (infoStrings.length > 1) {
         topic.lastModifiedString = infoStrings[1];
       }
       //最后回复人
-      if(infoStrings.length > 2){
+      if (infoStrings.length > 2) {
         topic.lastReply = infoStrings[2].replaceAll("最后回复来自 ", "");
       }
     }
+    //回复数量
     Element repliesElement = element.querySelector(".count_livid");
-    if(repliesElement != null){
+    if (repliesElement != null) {
       topic.replies = int.parse(repliesElement.text);
     }
     topic.member = member;
@@ -84,7 +93,7 @@ parseNodeList(String htmlString) async{
 }
 
 ///解析用户信息
-Future<UserInfo> parseUserInfo(String htmlString) async{
+Future<UserInfo> parseUserInfo(String htmlString) async {
   Document document = parse(htmlString);
   Element body = document.body;
   UserInfo userInfo = UserInfo();
@@ -92,48 +101,48 @@ Future<UserInfo> parseUserInfo(String htmlString) async{
   Element cellElement = body.querySelector("div.cell table");
   //头像
   Element avatarElement = cellElement.querySelector("img.avatar");
-  if(avatarElement != null){
+  if (avatarElement != null) {
     member.avatarNormal = avatarElement.attributes["src"];
   }
   //姓名
   Element nameElement = cellElement.querySelector("h1");
-  if(nameElement != null){
+  if (nameElement != null) {
     member.userName = nameElement.text;
   }
   //info
   Element infoElement = cellElement.querySelector("span.gray");
-  if(infoElement != null){
+  if (infoElement != null) {
     member.info = infoElement.text;
   }
   userInfo.member = member;
   //回复列表
   List<Element> cellItemElement = body.querySelectorAll(".cell.item");
-  List<Topic> topics = cellItemElement.map((element){
+  List<Topic> topics = cellItemElement.map((element) {
     Topic topic = Topic();
     NodeBean node = NodeBean();
     Member member = Member();
     Element titleElement = element.querySelector("a");
-    if(titleElement != null){
+    if (titleElement != null) {
       topic.title = titleElement.text;
       List<String> titleStrings = titleElement.attributes['href'].split("#");
-      if(titleStrings.length > 1){
+      if (titleStrings.length > 1) {
         topic.id = int.parse(titleStrings[0].replaceAll("/t/", ""));
         topic.replies = int.parse(titleStrings[1].replaceAll("reply", ""));
       }
     }
     Element infoElement = element.querySelector(".topic_info");
-    if(infoElement != null){
+    if (infoElement != null) {
       List<String> infoStrings = infoElement.text.split("  •  ");
-      if(infoStrings.length > 0){
+      if (infoStrings.length > 0) {
         node.title = parseNodeTitle(contentTrim(infoStrings[0]));
       }
-      if(infoStrings.length > 1){
+      if (infoStrings.length > 1) {
         member.userName = contentTrim(infoStrings[1]);
       }
-      if(infoStrings.length > 2){
+      if (infoStrings.length > 2) {
         topic.createdString = contentTrim(infoStrings[2]);
       }
-      if(infoStrings.length > 3){
+      if (infoStrings.length > 3) {
         topic.lastReply = contentTrim(infoStrings[3]).replaceAll("最后回复来自", "");
       }
     }
@@ -146,57 +155,60 @@ Future<UserInfo> parseUserInfo(String htmlString) async{
 }
 
 ///解析主题内容和回复列表
-parseTopicContentAndReplies(String htmlString) async{
+parseTopicContentAndReplies(String htmlString) async {
   Document document = parse(htmlString);
   Element body = document.body;
   TopicContent content = TopicContent();
 
   Element pageInputElement = body.querySelector(".page_input");
-  if(pageInputElement != null){
+  if (pageInputElement != null) {
     content.currentPage = int.parse(pageInputElement.attributes["value"]);
     content.totalPage = int.parse(pageInputElement.attributes['max']);
-  }else{
+  } else {
     content.currentPage = 1;
     content.totalPage = 1;
   }
 
   Topic topic = await parseTopicContent(body: body);
-  List<Reply> replies = await parseTopicReplies(body: body,isEnd: content.totalPage == 1 ? false : true);
+  List<Reply> replies = await parseTopicReplies(
+      body: body, isEnd: content.totalPage == 1 ? false : true);
   content.topic = topic;
   content.replies = replies;
   return content;
 }
 
 ///解析回复列表
-parseTopicReplies({String htmlString,Element body,bool isEnd}) async{
-  if(body == null){
+parseTopicReplies({String htmlString, Element body, bool isEnd}) async {
+  if (body == null) {
     Document document = parse(htmlString);
     body = document.body;
   }
   List<Element> tableElements = body.querySelectorAll("div.cell table");
-  tableElements = tableElements.sublist(isEnd ? 2 : 0, isEnd ? tableElements.length - 2 : tableElements.length);
-  return tableElements.map((element){
+  tableElements = tableElements.sublist(
+      isEnd ? 2 : 0, isEnd ? tableElements.length - 2 : tableElements.length);
+  return tableElements.map((element) {
     Reply reply = Reply();
     Member member = Member();
     //头像
     Element avatarElement = element.querySelector("img.avatar");
-    if(avatarElement != null){
+    if (avatarElement != null) {
       member.avatarNormal = avatarElement.attributes["src"];
     }
     //内容
     Element contentElement = element.querySelector("div.reply_content");
-    if(contentElement != null){
+    if (contentElement != null) {
       reply.content = contentElement.text;
       reply.contentRendered = contentElement.innerHtml.replaceAll("@\n", "");
     }
     //名称
     Element userNameElements = element.querySelector("a.dark");
-    if(userNameElements != null){
-      member.userName = userNameElements.attributes["href"].replaceAll("/member/", "");
+    if (userNameElements != null) {
+      member.userName =
+          userNameElements.attributes["href"].replaceAll("/member/", "");
     }
     //时间
     Element createdElements = element.querySelector("span.ago");
-    if(createdElements != null){
+    if (createdElements != null) {
       reply.createdString = createdElements.text;
     }
     reply.member = member;
@@ -205,8 +217,8 @@ parseTopicReplies({String htmlString,Element body,bool isEnd}) async{
 }
 
 ///解析主题内容
-parseTopicContent({String htmlString,Element body}) async{
-  if(body == null){
+parseTopicContent({String htmlString, Element body}) async {
+  if (body == null) {
     Document document = parse(htmlString);
     body = document.body;
   }
@@ -216,9 +228,9 @@ parseTopicContent({String htmlString,Element body}) async{
   NodeBean node = NodeBean();
   //id
   Element idElement = headerElement.querySelector(".votes");
-  if(idElement != null){
+  if (idElement != null) {
     List<String> idStrings = idElement.attributes["id"].split("_");
-    if(idStrings.length > 2){
+    if (idStrings.length > 2) {
       topic.id = int.parse(idStrings[1]);
     }
   }
@@ -259,7 +271,7 @@ parseTopicContent({String htmlString,Element body}) async{
     Element markDownElement = contentElement.querySelector(".markdown_body");
     if (markDownElement != null) {
       topic.content = markDownElement.text;
-      topic.contentRendered = markDownElement.innerHtml;
+      topic.contentRendered = markDownElement.innerHtml.replaceAll("\n", "");
       if (topic.contentRendered == null) {
         topic.contentRendered = markDownElement.outerHtml;
       }
@@ -286,8 +298,8 @@ parseTopicContent({String htmlString,Element body}) async{
 }
 
 ///解析主题列表
-Future<List<Topic>> parseTopics({String htmlString,Element body}) async {
-  if(body == null){
+Future<List<Topic>> parseTopics({String htmlString, Element body}) async {
+  if (body == null) {
     Document document = parse(htmlString);
     body = document.body;
   }
@@ -351,17 +363,16 @@ parseTitle(String title) {
 
 ///解析node的title
 ///由于参数中会带有附件内容的数量在前面，中间会用空格隔开，现在只需要去标题
-parseNodeTitle(String nodeTitle){
+parseNodeTitle(String nodeTitle) {
   List<String> strings = nodeTitle.split("  ");
-  if(strings.length > 1){
+  if (strings.length > 1) {
     return strings[1];
-  }else{
+  } else {
     return nodeTitle;
   }
 }
 
 ///去掉字符串内容中的空格
-String contentTrim(String string){
-  return string.replaceAll(" ","");
+String contentTrim(String string) {
+  return string.replaceAll(" ", "");
 }
-

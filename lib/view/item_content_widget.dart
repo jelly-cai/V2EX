@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_v2ex/bean/reply_bean.dart';
 import 'package:flutter_v2ex/data/parse_data.dart';
-import 'package:flutter_v2ex/html/simple_html_text_widget.dart';
+import 'package:flutter_v2ex/html/html_widget.dart';
 import 'package:flutter_v2ex/util/time_utils.dart';
 import 'package:flutter_v2ex/bean/topic_bean.dart';
 import 'package:flutter_v2ex/bean/topic_content_bean.dart';
@@ -12,14 +12,14 @@ import 'package:http/http.dart' as http;
 
 ///主题内容
 class ItemContentWidget extends StatefulWidget {
-  final Topic latest;
+  final Topic topic;
 
-  const ItemContentWidget({Key key, this.latest}) : super(key: key);
+  const ItemContentWidget({Key key, this.topic}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
-    return ItemContentWidgetState(latest);
+    return ItemContentWidgetState(topic);
   }
 }
 
@@ -79,23 +79,20 @@ class ItemContentWidgetState extends State {
                                 TextStyle(fontSize: 17.0, color: Colors.black),
                           ),
                         ),
-                        Divider(),
-                        SimpleHtmlText(
-                          data: topicContent.topic.contentRendered,
-                          defaultStyle: TextStyle(
-                              fontSize: 14.0,
-                              color: Colors.black54,
-                              fontWeight: FontWeight.normal,
-                              fontStyle: FontStyle.normal,
-                              decoration: TextDecoration.none),
-                        )
+                        topicContent.topic.contentRendered == null
+                            ? Container()
+                            : Divider(),
+                        topicContent.topic.contentRendered == null
+                            ? Container()
+                            : HtmlWidget(
+                                data: topicContent.topic.contentRendered)
                       ],
                     ),
                   );
                 }
 
                 ///如果是奇数加入分隔线
-                if(position.isOdd){
+                if (position.isOdd) {
                   return Divider(height: 3.0);
                 }
 
@@ -113,13 +110,16 @@ class ItemContentWidgetState extends State {
                         child: Center(child: Text("查看更多"))),
                   );
                 }
+
                 ///向下取整,减去头部
                 int realPosition = position ~/ 2 - 1;
+
                 ///回复item
                 Reply reply = topicContent.replies[realPosition];
                 return Container(
                   padding: EdgeInsets.all(5.0),
-                  child: ReplyItemWidget(reply: reply, position: realPosition + 1),
+                  child:
+                      ReplyItemWidget(reply: reply, position: realPosition + 1),
                 );
               },
               itemCount: getListLength(),
@@ -142,7 +142,8 @@ class ItemContentWidgetState extends State {
   getData() async {
     http.Response response =
         await http.get("https://www.v2ex.com/t/${latest.id}?p=1");
-    TopicContent topicContent = await parseTopicContentAndReplies(response.body);
+    TopicContent topicContent =
+        await parseTopicContentAndReplies(response.body);
     setState(() {
       this.topicContent = topicContent;
     });
