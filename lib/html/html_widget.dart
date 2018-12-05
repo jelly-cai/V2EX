@@ -230,7 +230,7 @@ class HtmlWidget extends StatelessWidget {
     );
   }
 
-  ///
+  ///打开网页
   openUrl(String url) async{
     if(await canLaunch(url)){
       await launch(url);
